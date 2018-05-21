@@ -1,0 +1,170 @@
+/* For use on multiple pages*/
+.center{
+	text-align: center;
+}
+.small_note{
+	font-size: 10;
+	color: red;
+	display: none;
+	margin: 0px;
+}
+.tab_container{
+	
+}
+.tab_button{
+	background-color: inherit;
+	color: inherit;
+	font-size: 24px;
+	outline: none;
+	border:solid;
+	margin:0;
+}
+.tab_content{
+	display: none;
+}
+.settings_overlay {
+	height: 100%;
+	width: 50%;
+	display: none;
+	position: fixed;
+	z-index: 3;
+	top: 0;
+	left: 0;
+	padding:10px;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0, 0.8);
+	color:white;
+	text-align:left;
+	overflow:scroll;
+}
+.settings_overlay form{
+	border-style: solid;
+	color: white;
+	width: 100%;
+	text-align: left;
+}
+.header1{
+	font-size: 32px;
+	text-align:center;
+	border: solid;
+}
+.header2{
+	font-size: 24px;
+	border-style: solid;
+	width: 100%;
+	text-align:center;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0px;
+	padding: 0px;
+	display: inline-block;
+	
+}
+.header3{
+	font-size: 18px;
+	width: 100%;
+	border-style: solid;
+	text-align:center;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0px;
+	display: inline-block;
+}
+.options_menu{
+	width: 200px;
+	border: solid;
+	display: inline-block;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	
+}
+#notification_overlay {
+	height: 100%;
+	width: 100%;
+	display: none;
+	position: fixed;
+	z-index: 100;
+	top: 0;
+	left: 0;
+	padding:0;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0, 0.1);
+	color:white;
+	text-align:center;
+	overflow:scroll;
+}
+#clear_overlay{
+	border: solid;
+	height: 100%;
+	width: 100%;
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	background-color: rgba(0,0,0, 0);
+}
+/* for use on Play Blackjack Page Only*/
+.hand_of_cards{
+	position: relative;
+	border: solid;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 300px;
+	height: 150px;
+}
+.card{
+	position: relative;
+	display: inline;
+	height: 100%;
+	margin-right: -25%;
+	margin-bottom: -30%;
+	
+}
+.player_options_button{
+	display: none;
+}
+.chips_container{
+	display: inline-block;
+	border: solid;
+	float: right;
+	text-align: center;
+	width: 300px;
+	height: 100px;
+	padding: 0px
+}
+#play_blackjack_div {
+	height: 100%;
+	width: 100%;
+	display: none;
+	position: fixed;
+	z-index: 1;
+	padding: 10px;
+	overflow: scroll;
+	top: 0;
+	left:0;
+	background-color: rgba(125,0,0);
+	background-color: rgba(125,0,0, 1);
+}
+
+#player_options_button_container{
+	display: block;
+	border: solid;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+#bet_amount_notification{
+	color: black;
+	text-align: center;
+	border: solid;
+}
+#running_count_button{
+	width: 20%;
+	height: 100%;
+	margin: 0px;
+	display: inline-block;
+	top: 0px;
+}
