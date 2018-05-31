@@ -1,5 +1,6 @@
 main settings
 . counting system options
+. reset all data
 
 play Blackjack (future updates)
 . 2 npc players in bj game
@@ -11,3 +12,5 @@ play Blackjack (future updates)
 . option to display player hand values
 . house edge for rules (relative to default)
 . hovertext for rules
+. manditory rules for leaderboard
+. save money amount into localstorage
