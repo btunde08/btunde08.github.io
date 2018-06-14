@@ -962,9 +962,15 @@ var trueCountApp = (function(){
 
 	function practiceSkills(){
 		let navigationArray = ["practice_home"];
+		let flashcardArray = [];
 		
 		document.getElementById("practice_skills_div").style.display = "block";
+		Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
+		document.getElementById("practice_home").style.display = "block";
+		
 		addEventListeners();
+		loadFlashcards();
+		
 		return removeEverything;
 		
 		//function that gets called for all navigation buttons in the practice overlay. sets display of all displays other than selected one to "none"
@@ -974,6 +980,18 @@ var trueCountApp = (function(){
 			document.getElementById(e.target.value).style.display = "block";
 			
 			navigationArray.push(e.target.value);
+		}
+		
+		//connects to server and loads flashcards from DB if they don't exist in local storage
+		function loadFlashcards(){
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					flashcardArray = JSON.parse(this.responseText);
+				}
+			};
+			xmlhttp.open("POST", "../loadflashcards.php", true);
+			xmlhttp.send();
 		}
 		
 		function goBackOne(){
