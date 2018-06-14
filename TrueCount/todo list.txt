@@ -14,3 +14,15 @@ play Blackjack (future updates)
 . hovertext for rules
 . manditory rules for leaderboard
 . save money amount into localstorage
+
+flashcards
+. hard hands
+. soft hands,
+. split hands,
+
+. same for all rules,
+. different based on rules,
+
+. rule-specific flashcard sets
+
+. all cards

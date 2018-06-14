@@ -1,7 +1,4 @@
 /* For use on multiple pages*/
-.center{
-	text-align: center;
-}
 .small_note{
 	font-size: 10;
 	color: red;
@@ -27,7 +24,7 @@
 	width: 50%;
 	display: none;
 	position: fixed;
-	z-index: 3;
+	z-index: auto;
 	top: 0;
 	left: 0;
 	padding:10px;
@@ -77,6 +74,15 @@
 	position: absolute;
 	left: 0px;
 	top: 0px;
+	z-index: auto;
+	
+}
+.center_navigation{
+	width: 200px;
+	border: solid;
+	display: block;
+	position: relative;
+	left: calc(50% - 100px);
 	
 }
 #notification_overlay {
@@ -102,7 +108,7 @@
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 2;
+	z-index: auto;
 	background-color: rgba(0,0,0, 0);
 }
 /* for use on Play Blackjack Page Only*/
@@ -135,12 +141,12 @@
 	height: 100px;
 	padding: 0px
 }
-#play_blackjack_div {
+.bj_table_overlay {
 	height: 100%;
 	width: 100%;
 	display: none;
 	position: fixed;
-	z-index: 1;
+	z-index: auto;
 	padding: 10px;
 	overflow: scroll;
 	top: 0;
@@ -167,4 +173,14 @@
 	margin: 0px;
 	display: inline-block;
 	top: 0px;
+}
+/* Atomic CSS for use on multiple pages*/
+.hidden{
+	display: none;
+}
+.center{
+	text-align: center;
+}
+.position_top{
+	margin-top: 0px;
 }

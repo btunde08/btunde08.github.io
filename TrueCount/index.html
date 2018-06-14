@@ -2,13 +2,25 @@
 	<html lang="en">
 		<head>
 			<title>True Count: Learn To Beat The House</title>
-				<link rel="stylesheet" type="text/css" href="css/style.css">
+			<link rel="stylesheet" type="text/css" href="css/style.css">
+			<!-- 
+			prevents cross-site scripting by eliminating in-line javascript reading (untested)
+			<meta http-equiv="Content-Security-Policy" content="script-src 'self' https://apis.google.com">
+			
+			<meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+			<meta http-equiv="Content-Security-Policy" content="style-src 'self'">
+			<meta http-equiv="Content-Security-Policy" content="img-src 'self'">
+			<meta http-equiv="Content-Security-Policy" content="connect-src 'self'">
+			
+			combined example:
+			<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'">
+			-->
 		</head>
 		<body>
 			<ul class="options_menu">
 				<li><button id="play_blackjack_button"type="button">Play Blackjack</button></li>
 				<li>Learn To Count</li>
-				<li>Practice Skills</li>
+				<li><button id="practice_skills_button" type="button">Practice Skills</button></li>
 				<li>Settings</li>
 				<li>Stats</li>
 				<li>Run Simulations</li>
@@ -20,7 +32,7 @@
 			</div>
 			
 			<!--#############################Play Blackjack Overlay############################## -->
-			<div id="play_blackjack_div">
+			<div id="play_blackjack_div" class="bj_table_overlay">
 				<div class="center">
 					<button type="button" id="running_count_button">Click To Show Running Count</button>
 				</div>
@@ -193,6 +205,35 @@
 				</div>
 				<!-- -------------------- End Rules Overlay---------------------- -->
 			</div>
+			
+			<!-- ############################ practice skills overlay ######################## -->
+			<div id="practice_skills_div" class="bj_table_overlay">
+				<p class="header1 position_top">
+					What Would You Like To Practice?
+				</p>
+				
+				<ul class="options_menu">
+					<li><button class="return_to_menu_button" type="button">Main Menu</button></li>
+				</ul>
+				
+				<ul id="practice_home" class="center_navigation">
+					<li><button id="practice_basic_strategy_button" type="button" value="practice_home_basic">Basic Strategy</button></li>
+					<li>Running Count</li>
+					<li>Advanced Strategy</li>
+					<li>Betting Strategy</li>
+				</ul>
+				
+				<ul id="practice_home_basic" class="center_navigation hidden">
+					<li><button type="button">Flashcards</button></li>
+					<li>Complete the Table</li>
+					<li><button name="go_back_button" type="button">Go Back</button></li>
+				</ul>
+				
+				<div class="center">
+						Quick Start
+				</div>
+			</div>
+			
 			<script src="scripts/script.js"></script>
 		</body>
 	</html>

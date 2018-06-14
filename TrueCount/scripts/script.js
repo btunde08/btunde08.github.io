@@ -4,9 +4,11 @@ var trueCountApp = (function(){
 	const notificationTime = 2000;
 	const hiOpt2 = [0,1,1,2,2,1,1,0,0,-2,-2,-2,-2];
 	
-	//any calls to functions that add event listeners must return a function that removes those listeners. these functions are stored in an array
+	//adds event listeners to index.html
+	//any further calls to functions that add event listeners must return a function that removes those listeners. these functions are stored in an array
 	var eventsToRemove = [];
 	document.getElementById("play_blackjack_button").addEventListener("click", function(){eventsToRemove.push(playBlackjack())});
+	document.getElementById("practice_skills_button").addEventListener("click", function(){eventsToRemove.push(practiceSkills())});
 	
 	Array.from(document.getElementsByClassName("return_to_menu_button")).forEach(function(item){item.addEventListener("click", returnToMenu)});
 	Array.from(document.getElementsByClassName("tab_container")).forEach(function(item){item.addEventListener("click", changeTab)});
@@ -958,4 +960,39 @@ var trueCountApp = (function(){
 	
 	}
 
+	function practiceSkills(){
+		let navigationArray = ["practice_home"];
+		
+		document.getElementById("practice_skills_div").style.display = "block";
+		addEventListeners();
+		return removeEverything;
+		
+		//function that gets called for all navigation buttons in the practice overlay. sets display of all displays other than selected one to "none"
+		//html navigation button values are the same as the div container ids that they navigate to 
+		function navigateTo(e){
+			Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
+			document.getElementById(e.target.value).style.display = "block";
+			
+			navigationArray.push(e.target.value);
+		}
+		
+		function goBackOne(){
+			Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
+			document.getElementById(navigationArray[navigationArray.length-2]).style.display = "block";
+			
+			navigationArray.pop();
+		}
+		
+		function addEventListeners(){
+			Array.from(document.getElementsByName("go_back_button")).forEach(function(btn){btn.addEventListener("click", goBackOne)});
+			document.getElementById("practice_basic_strategy_button").addEventListener("click", navigateTo);
+		}
+		
+		function removeEverything(){
+			Array.from(document.getElementsByName("go_back_button")).forEach(function(btn){btn.removeEventListener("click", goBackOne)});
+			document.getElementById("practice_skills_div").style.display = "none";
+			document.getElementById("practice_basic_strategy_button").removeEventListener("click", navigateTo);
+		}
+		
+	}
 })();
