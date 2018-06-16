@@ -20,9 +20,6 @@ flashcards
 . soft hands,
 . split hands,
 
-. same for all rules,
-. different based on rules,
-
-. rule-specific flashcard sets
+(further split by ruleset)
 
 . all cards

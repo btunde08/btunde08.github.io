@@ -963,13 +963,20 @@ var trueCountApp = (function(){
 	function practiceSkills(){
 		let navigationArray = ["practice_home"];
 		let flashcardArray = [];
+		let answerHistory = [];
+		let spacingIncrementData = {
+			stability: [],
+			incrementMultiplier: []
+		};
 		
-		document.getElementById("practice_skills_div").style.display = "block";
+		
+		document.getElementById("practice_skills_overlay").style.display = "block";
 		Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
 		document.getElementById("practice_home").style.display = "block";
 		
 		addEventListeners();
 		loadFlashcards();
+		
 		
 		return removeEverything;
 		
@@ -982,16 +989,110 @@ var trueCountApp = (function(){
 			navigationArray.push(e.target.value);
 		}
 		
-		//connects to server and loads flashcards from DB if they don't exist in local storage
+		//connects to server and loads flashcards from DB if they don't exist in local storage.
+		//flashcard array is an array of objects with attributes of the same name and value as columns from flashcard table in database 
 		function loadFlashcards(){
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					flashcardArray = JSON.parse(this.responseText);
+					
+					spacingIncrementData.stability.push(60000);
+					answerHistory.push(spacingIncrementData);
+					
+					flashcardArray.forEach(function(card){card.reviewNumber = 0; card.isUpdated = false; card.isNew = true;})
 				}
 			};
 			xmlhttp.open("POST", "../loadflashcards.php", true);
 			xmlhttp.send();
+		}
+		
+		//creates a practice deck and fills it with the relevant cards from flashcardArray with cards that have already been seen at the front
+		function basicFlashcardPractice(e){
+			let practiceDeck = [];
+			flashcardArray.forEach(function(card){
+				if(e.target.value == card.hand_type || e.target.value == "all"){
+					if(card.isNew === false){
+						card.percentOverdue = 100*(Date.now()-card.lastSeen)/card.currentIntervalLength
+						practiceDeck.push(card);
+					}else{
+						card.percentOverdue = 100;
+						practiceDeck.push(card);
+					}
+				}
+				
+			});
+			
+			sort(practiceDeck);
+			
+			
+			//sorts an array of cards based on percent overdue value
+			function sort(array){
+				let a1 = [];
+				let a2 = [];
+				
+				array.forEach(function(item){
+					if(array.indexOf(item) < array.length / 2){
+						a1.push(item);
+					}else{
+						a2.push(item);
+					}
+					
+				});
+				
+				if(isOrdered(a1) === false){
+					sort(a1);
+				}
+				if(isOrdered(a2) === false){
+					sort(a2);
+				}
+				
+				combine(a1,a2,array);
+				
+				function isOrdered(array){
+					let checker = array[0].percentOverdue;
+					let ordered = true;
+					
+					array.forEach(function(item){
+						if(item.percentOverdue > checker){
+							ordered = false;
+						}else{
+							checker = item.percentOverdue;
+						}
+					})
+					
+					return ordered;
+				}
+				function combine(a1,a2, array){
+					let index1=0;
+					let index2=0;
+					array.splice(0,array.length);
+					
+					while(index1<a1.length || index2<a2.length){
+						if(index1<a1.length && index2<a2.length){
+							if(a1[index1].percentOverdue >= a2[index2].percentOverdue){
+								array.push(a1[index1]);
+								index1++;
+							}else{
+								array.push(a2[index2]);
+								index2++;
+							}
+						}else if(index1 >= a1.length && index2 < a2.length){
+							array.push(a2[index2]);
+							index2++;
+						}else if(index2 >= a2.length && index1 < a1.length){
+							array.push(a1[index1]);
+							index1++;
+						}
+					}
+					
+				}
+				
+			}
+		}
+		
+		function quickstartPracticeSession(){
+			
 		}
 		
 		function goBackOne(){
@@ -1004,12 +1105,16 @@ var trueCountApp = (function(){
 		function addEventListeners(){
 			Array.from(document.getElementsByName("go_back_button")).forEach(function(btn){btn.addEventListener("click", goBackOne)});
 			document.getElementById("practice_basic_strategy_button").addEventListener("click", navigateTo);
+			document.getElementById("practice_quickstart_button").addEventListener("click", quickstartPracticeSession);
+			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.addEventListener("click", basicFlashcardPractice)});
 		}
 		
 		function removeEverything(){
 			Array.from(document.getElementsByName("go_back_button")).forEach(function(btn){btn.removeEventListener("click", goBackOne)});
-			document.getElementById("practice_skills_div").style.display = "none";
+			document.getElementById("practice_skills_overlay").style.display = "none";
 			document.getElementById("practice_basic_strategy_button").removeEventListener("click", navigateTo);
+			document.getElementById("practice_quickstart_button").removeEventListener("click", quickstartPracticeSession);
+			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.removeEventListener("click", basicFlashcardPractice)});
 		}
 		
 	}
