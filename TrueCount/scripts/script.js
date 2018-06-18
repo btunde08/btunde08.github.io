@@ -21,6 +21,15 @@ var trueCountApp = (function(){
 		eventsToRemove = [];
 	}
 	
+	function exit(e){
+		
+		let removableItems = document.getElementById(e.target.value).getElementsByClassName("remove");
+		for(i=0; i<removableItems.length; ){
+			removableItems[i].parentNode.removeChild(removableItems[i]);
+		}
+		document.getElementById(e.target.value).style.display = "none";
+		
+	}
 	//clears all tab content on same layer, then uses the html name property of the clicked tab button to select which elements to be displayed
 	function changeTab(e){
 		Array.from(document.getElementsByClassName("tab_content")).forEach(function(item){
@@ -99,11 +108,7 @@ var trueCountApp = (function(){
 			//opens the blackjack rule settings and adjusts them to user preferences(if they exist) saved in session storage
 			function openRulesOverlay(){
 				
-				let clearOverlay = document.createElement("div");
-				clearOverlay.id="clear_overlay";
-				clearOverlay.addEventListener("click", saveRuleSelections);
-				document.getElementById("play_blackjack_div").appendChild(clearOverlay);
-				
+				document.getElementById("clear_overlay").style.display = "block";
 				document.getElementById("rules_overlay").style.display = "block";
 				
 			}
@@ -126,9 +131,7 @@ var trueCountApp = (function(){
 						generateShoe();
 					}
 					
-					let clearOverlay = document.getElementById("clear_overlay")
-					document.getElementById("play_blackjack_div").removeChild(clearOverlay);
-					
+					document.getElementById("clear_overlay").style.display = "none";
 					document.getElementById("rules_overlay").style.display = "none";
 					document.getElementById("blackjack_payout_warning").style.display = "none";
 					document.getElementById("table_min_warning").style.display = "none";
@@ -206,8 +209,7 @@ var trueCountApp = (function(){
 			}
 				
 			function cancelRuleSelection(){
-				let clearOverlay = document.getElementById("clear_overlay")
-				document.getElementById("play_blackjack_div").removeChild(clearOverlay);
+				document.getElementById("clear_overlay").style.display = "none";
 				document.getElementById("rules_overlay").style.display = "none";
 				
 				//overwrites rules with sessionStorage if they exist
@@ -415,7 +417,24 @@ var trueCountApp = (function(){
 					
 					for(let i=0; i<player.hands.length; i++){
 						let newHand = document.createElement("div");
+						let newIndicator = document.createElement("div");
+						let content = document.createElement("div");
+						
 						newHand.className = "hand_of_cards";
+						newIndicator.className = "hand_indicator";
+						content.className = "content";
+						
+						if(player != dealer || turn === "dealer"){
+							calculateHands(player);
+						}
+						
+						content.innerHTML = player.handValue[i];
+						if(content.innerHTML === "0"){
+							content.innerHTML = "";
+						}
+						newIndicator.appendChild(content);
+						newHand.appendChild(newIndicator);
+						
 						if(i < player.hands.length - 1){
 							newHand.style.marginBottom = "-120px";
 						}
@@ -423,6 +442,7 @@ var trueCountApp = (function(){
 						for(let j=0; j<player.hands[i].length; j++){
 							newHand.appendChild(player.hands[i][j].imageHTML);
 						}
+						
 						document.getElementById(player.handDivId).appendChild(newHand);
 					}			
 				}
@@ -855,7 +875,7 @@ var trueCountApp = (function(){
 						}
 						let image = document.createElement("img");
 						let imageNumber = s*13+t+1;
-						image.src = "images/cards/cards_" + imageNumber + ".png"
+						image.src = "images/cards/cards_" + imageNumber + ".png";
 						image.alt = card.type + " Of " + card.suit;
 						image.className = "card";
 						
@@ -910,6 +930,7 @@ var trueCountApp = (function(){
 			document.getElementById("select_rules_button").addEventListener("click", userSettings.saveRuleSelections);
 			document.getElementById("restore_defaults_button").addEventListener("click", userSettings.restoreDefaultRules);
 			document.getElementById("cancel_rule_selection_button").addEventListener("click", userSettings.cancelRuleSelection);
+			document.getElementById("clear_overlay").addEventListener("click", userSettings.saveRuleSelections);
 			
 			//blackjack related buttons
 			document.getElementById("deal_cards_button").addEventListener("click", blackjackGame.dealCards);
@@ -940,6 +961,7 @@ var trueCountApp = (function(){
 			document.getElementById("select_rules_button").removeEventListener("click", userSettings.saveRuleSelections);
 			document.getElementById("restore_defaults_button").removeEventListener("click", userSettings.restoreDefaultRules);
 			document.getElementById("cancel_rule_selection_button").removeEventListener("click", userSettings.cancelRuleSelection);
+			document.getElementById("clear_overlay").removeEventListener("click", userSettings.saveRuleSelections);
 			
 			//blackjack game buttons
 			document.getElementById("deal_cards_button").removeEventListener("click", blackjackGame.dealCards);
@@ -1007,9 +1029,13 @@ var trueCountApp = (function(){
 			xmlhttp.send();
 		}
 		
-		//creates a practice deck and fills it with the relevant cards from flashcardArray with cards that have already been seen at the front
+		//practice deck is an array of card objects loaded from server with some properties taken from database and others added in js:
+		//*****card_id, number_of_decks, dealer_hits_soft, dealer_card_value, player_hand_value, hand_type, action_id, 
+		//*****reviewNumber, isUpdated, isNew, percentOverdue
 		function basicFlashcardPractice(e){
 			let practiceDeck = [];
+			
+			//creates a practice deck and fills it with the relevant cards from flashcardArray and assigns and overdue value
 			flashcardArray.forEach(function(card){
 				if(e.target.value == card.hand_type || e.target.value == "all"){
 					if(card.isNew === false){
@@ -1024,7 +1050,176 @@ var trueCountApp = (function(){
 			});
 			
 			sort(practiceDeck);
+			document.getElementById("flashcard_overlay").style.display = "block";
+			displayTopCard();
 			
+			//to add:
+			//correctAnswer()
+			//incorrectAnswer()
+			
+			function displayTopCard(){
+				
+				adjustHeaderInfo();
+				displayHands();
+				
+				//displays info like soft 17 rules and number of decks
+				function adjustHeaderInfo(){
+					let cardHeaders = document.getElementById("flashcard_overlay").getElementsByClassName("header2");
+					let yesNo = ["yes", "no"]
+					
+					if(practiceDeck[0].number_of_decks == 3){
+						practiceDeck[0].number_of_decks = "3+"
+					}
+					cardHeaders[0].innerHTML = "Number Of Decks: " + practiceDeck[0].number_of_decks;
+					cardHeaders[1].innerHTML = "Dealer Hits Soft 17: " + practiceDeck[0].dealer_hits_soft;
+					cardHeaders[2].innerHTML = "Double After Split Allowed: " + yesNo[Math.floor(Math.random()*2)];
+				}	
+				
+				function displayHands(){
+					//displays dealer's up card
+					let upCard = document.createElement("img");
+					let imageNumber;
+					let imageArray = [];
+					
+					if(practiceDeck[0].dealer_card_value === 11){
+						imageNumber = Math.floor(Math.random()*4)*13 + 1;
+					}else if(practiceDeck[0].dealer_card_value === 10){
+						imageNumber = Math.floor(Math.random()*4)*13 + 10 + Math.floor(Math.random()*4);
+					}else{
+						imageNumber = Math.floor(Math.random()*4)*13 + practiceDeck[0].dealer_card_value;
+					}
+					
+					imageArray.push(imageNumber);
+					
+					upCard.src = "images/cards/cards_" + imageNumber + ".png";
+					upCard.alt = "dealer up card";
+					upCard.className = "card remove";
+					upCard.style.marginRight = "0px";
+					document.getElementById("flashcard_overlay").getElementsByClassName("hand_of_cards")[0].appendChild(upCard);
+				
+					//creates player hand
+					let card = document.createElement("img");
+					let remainingValue = practiceDeck[0].player_hand_value;
+					let cardValue;
+					let cardArray = [];
+					
+					switch(practiceDeck[0].hand_type){
+						case "hard":
+							if(practiceDeck[0].player_hand_value <= 11){
+								cardValue = Math.floor( Math.random()*(remainingValue-3) ) + 2;
+								cardArray.push(cardValue);
+								remainingValue -= cardValue;
+							}else if(practiceDeck[0].player_hand_value >= 12){
+								cardValue = Math.floor( Math.random()*10 ) + 1;
+								cardArray.push(cardValue);
+								remainingValue -= cardValue;
+							}
+							break;
+						case "soft":
+							cardArray.push(11);
+							remainingValue -= 11;
+							break;
+						case "split":
+							cardArray.push(remainingValue/2);
+							cardArray.push(remainingValue/2);
+							remainingValue = 0;
+							break;
+					}
+					
+					//continues to draw cards to fill hand, making sure to avoid soft aces
+					while(remainingValue > 0){
+						if(remainingValue <= 10){
+							cardValue = Math.floor( Math.random()*(remainingValue-2) ) + 2;
+							if(cardValue === remainingValue - 1){
+								cardValue = remainingValue;
+							}
+							cardArray.push(cardValue);
+							remainingValue -= cardValue;
+						}else if(remainingValue === 11){
+							cardValue = Math.floor( Math.random()*(remainingValue-3) ) + 2;
+							cardArray.push(cardValue);
+							remainingValue -= cardValue;
+						}else if(remainingValue >= 12){
+							cardValue = Math.floor( Math.random()*10 ) + 1;
+							cardArray.push(cardValue);
+							remainingValue -= cardValue;
+						}
+					}
+					
+					//checks array to make sure there are not too many of the same value card
+					let tooManyCards;
+					do{
+						tooManyCards = false;
+						cardArray.forEach(function (card){
+							let count = 0;
+							let numberOfDecks = practiceDeck[0].number_of_decks;
+							
+							//too many copies of a card only possible for 1 deck: card value<=5 and 2deck:cardValue<=2
+							if(card <= 8-3*numberOfDecks){
+								cardArray.forEach(function (item){
+									if(item === card){ count++;};
+								});
+								
+								if(count>4*numberOfDecks || (count === 4*numberOfDecks - 1 && practiceDeck[0].dealer_card_value === card)){
+									tooManyCards = true;
+									let value = card;
+									card *= 2;
+									cardArray.forEach(function (item){
+										if(item === value){
+											cardArray.splice(cardArray.indexOf(item), 1);
+											value = 0;
+										}
+									})
+								}
+							}
+							
+						});
+					}while(tooManyCards === true);
+					
+					//display cards on screen
+					cardArray.forEach(function (card){
+						let image = document.createElement("img");
+						let imageNumber;
+						
+						if(card === 11 || card === 1){
+							imageNumber = Math.floor(Math.random()*4)*13 + 1;
+						}else if(card === 10){
+							imageNumber = Math.floor(Math.random()*4)*13 + 10 + Math.floor(Math.random()*4);
+						}else{
+							imageNumber = Math.floor(Math.random()*4)*13 + card;
+						}
+						
+						//checks to see if image has already been used too many times, and selects another if it has
+						let wasModified;
+						do{
+							wasModified = false
+							let useCount = 0;
+							imageArray.forEach(function(item){
+								if(item === imageNumber){ useCount++;}
+							})
+							if(useCount >= practiceDeck[0].number_of_decks){
+								imageNumber += 13;
+								if(imageNumber != 52){
+									imageNumber %= 52;
+								}
+								wasModified = true;
+							}
+						}while(wasModified === true);
+						
+						imageArray.push(imageNumber);
+						
+						image.src = "images/cards/cards_" + imageNumber + ".png";
+						image.alt = "player card with value of " + card;
+						image.className = "card remove";
+						
+						image.style.marginRight = "-12.5%";
+						image.style.marginLeft = "-12.5%";
+						
+						document.getElementById("flashcard_overlay").getElementsByClassName("hand_of_cards")[1].appendChild(image);
+					
+					});
+				}	
+			}
 			
 			//sorts an array of cards based on percent overdue value
 			function sort(array){
@@ -1092,7 +1287,7 @@ var trueCountApp = (function(){
 		}
 		
 		function quickstartPracticeSession(){
-			
+			// checks user progress in the various categories and automatically directs to the one most needed
 		}
 		
 		function goBackOne(){
@@ -1107,6 +1302,8 @@ var trueCountApp = (function(){
 			document.getElementById("practice_basic_strategy_button").addEventListener("click", navigateTo);
 			document.getElementById("practice_quickstart_button").addEventListener("click", quickstartPracticeSession);
 			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.addEventListener("click", basicFlashcardPractice)});
+			Array.from(document.getElementsByClassName("exit_button")).forEach(function(btn){btn.addEventListener("click", exit)});
+			
 		}
 		
 		function removeEverything(){
@@ -1115,6 +1312,7 @@ var trueCountApp = (function(){
 			document.getElementById("practice_basic_strategy_button").removeEventListener("click", navigateTo);
 			document.getElementById("practice_quickstart_button").removeEventListener("click", quickstartPracticeSession);
 			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.removeEventListener("click", basicFlashcardPractice)});
+			Array.from(document.getElementsByClassName("exit_button")).forEach(function(btn){btn.removeEventListener("click", exit)});
 		}
 		
 	}

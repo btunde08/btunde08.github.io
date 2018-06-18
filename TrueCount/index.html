@@ -3,18 +3,6 @@
 		<head>
 			<title>True Count: Learn To Beat The House</title>
 			<link rel="stylesheet" type="text/css" href="css/style.css">
-			<!-- 
-			prevents cross-site scripting by eliminating in-line javascript reading (untested)
-			<meta http-equiv="Content-Security-Policy" content="script-src 'self' https://apis.google.com">
-			
-			<meta http-equiv="Content-Security-Policy" content="default-src 'self'">
-			<meta http-equiv="Content-Security-Policy" content="style-src 'self'">
-			<meta http-equiv="Content-Security-Policy" content="img-src 'self'">
-			<meta http-equiv="Content-Security-Policy" content="connect-src 'self'">
-			
-			combined example:
-			<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'">
-			-->
 		</head>
 		<body>
 			<ul class="options_menu">
@@ -41,13 +29,12 @@
 					<li><button id="open_rules_overlay_button" type="button">Set Rules</button></li>
 				</ul>
 				
-				<div id="dealer_hand"> 
-					<div class="hand_of_cards"></div>
-				</div>
+				<div id="dealer_hand"></div>
+				
 				<p class="header1">Let's Play Blackjack</p>
-				<div id="main_player_hands">
-					<div class="hand_of_cards"></div>
-				</div>
+				
+				<div id="main_player_hands"></div>
+				
 				<div id="player_options_button_container">
 					<p id="bet_amount_notification" class="small_note">
 						Bet Must be between $<span id="bet_min_note"></span> and $<span id="bet_max_note"></span>.
@@ -76,6 +63,7 @@
 					<button type="button" id="place_chips_button">Place Chips</button>
 				</div>
 				<!--#############################Rules Overlay############################## -->
+				<div id="clear_overlay"></div>
 				
 				<div id="rules_overlay" class="settings_overlay">
 					<p class="header1">Select House Rules</p>
@@ -217,6 +205,7 @@
 				</ul>
 				
 				<ul id="practice_home" class="center_navigation">
+					<li>Calculate Hands</li>
 					<li><button id="practice_basic_strategy_button" type="button" value="practice_home_basic">Basic Strategy</button></li>
 					<li>Running Count</li>
 					<li>Advanced Strategy</li>
@@ -234,6 +223,24 @@
 				
 				<div class="center">
 						<button type="button" id="practice_quickstart_button">Quick Start</button>
+				</div>
+				
+				<!-- ############################ flashcard overlay ######################## -->
+				<div id="flashcard_overlay">
+					<ul class="options_menu">
+						<li><button class="exit_button" type="button" value="flashcard_overlay">Exit</button></li>
+					</ul>
+					<p class="header2">placeholder text Number of Decks</p>
+					<p class="header2">placeholder text Hit or Stay Soft 17</p>
+					<p class="header2">placeholder text Double After Split Allowed/Not</p>
+					<br>
+					<br>
+					<div class="hand_of_cards center"></div>
+					<br>
+					<div class="hand_of_cards center"></div>
+					<br>
+					
+					
 				</div>
 			</div>
 			
