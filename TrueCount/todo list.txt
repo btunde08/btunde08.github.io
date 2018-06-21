@@ -6,7 +6,6 @@ play Blackjack (future updates)
 . 2 npc players in bj game
 . optimal strategy notification
 . user saves rule settings as a csino profile for later use
-. hand values next to hands
 . current hand is highlighted
 . shoe display
 . option to display player hand values
@@ -14,12 +13,3 @@ play Blackjack (future updates)
 . hovertext for rules
 . manditory rules for leaderboard
 . save money amount into localstorage
-
-flashcards
-. hard hands
-. soft hands,
-. split hands,
-
-(further split by ruleset)
-
-. all cards

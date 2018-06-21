@@ -260,7 +260,7 @@ var trueCountApp = (function(){
 					
 					checkForBlackjack();
 					showPlayerOptions();
-					document.getElementById("deal_cards_button").style.display = "none";
+					document.getElementsByClassName("deal_cards_button")[0].style.display = "none";
 					document.getElementById("bet_area").style.display = "none";
 					
 					bankroll  = bankroll - betAmount;
@@ -504,34 +504,34 @@ var trueCountApp = (function(){
 
 			function showPlayerOptions(){
 				
-				document.getElementById("stay_button").style.display = "inline-block";
+				document.getElementsByClassName("stay_button")[0].style.display = "inline-block";
 				
 				if(checkForHit()){
-					document.getElementById("hit_button").style.display = "inline-block";
+					document.getElementsByClassName("hit_button")[0].style.display = "inline-block";
 				}
 				else{
-					document.getElementById("hit_button").style.display = "none";
+					document.getElementsByClassName("hit_button")[0].style.display = "none";
 				}
 				
 				if(checkForDouble()){
-					document.getElementById("double_button").style.display = "inline-block";
+					document.getElementsByClassName("double_button")[0].style.display = "inline-block";
 				}
 				else{
-					document.getElementById("double_button").style.display = "none";
+					document.getElementsByClassName("double_button")[0].style.display = "none";
 				}
 				
 				if(checkForSplit()){
-					document.getElementById("split_button").style.display = "inline-block";
+					document.getElementsByClassName("split_button")[0].style.display = "inline-block";
 				}
 				else{
-					document.getElementById("split_button").style.display = "none";
+					document.getElementsByClassName("split_button")[0].style.display = "none";
 				}
 				
 				if(checkForSurrender()){
-					document.getElementById("surrender_button").style.display = "inline-block";
+					document.getElementsByClassName("surrender_button")[0].style.display = "inline-block";
 				}
 				else{
-					document.getElementById("surrender_button").style.display = "none";
+					document.getElementsByClassName("surrender_button")[0].style.display = "none";
 				}
 				
 				//checks to see if surrender is allowed. returns true or false.
@@ -740,7 +740,7 @@ var trueCountApp = (function(){
 				initializePlayers();
 				removeOptionButtons();
 				
-				document.getElementById("deal_cards_button").style.display = "inline-block";
+				document.getElementsByClassName("deal_cards_button")[0].style.display = "inline-block";
 				turn = "mainPlayer";
 				
 				document.getElementById("bet_area").style.display = "inline-block";
@@ -754,22 +754,14 @@ var trueCountApp = (function(){
 				
 				//removes the hit, stay, double, split and surrender buttons from the screen
 				function removeOptionButtons(){
-					document.getElementById("hit_button").style.display = "none";
-					document.getElementById("stay_button").style.display = "none";
-					document.getElementById("double_button").style.display = "none";
-					document.getElementById("split_button").style.display = "none";
-					document.getElementById("surrender_button").style.display = "none";
+					document.getElementsByClassName("hit_button")[0].style.display = "none";
+					document.getElementsByClassName("stay_button")[0].style.display = "none";
+					document.getElementsByClassName("double_button")[0].style.display = "none";
+					document.getElementsByClassName("split_button")[0].style.display = "none";
+					document.getElementsByClassName("surrender_button")[0].style.display = "none";
 				}
 			}
 			
-			//removes the hit, stay, double, and split buttons from the screen
-			function removeOptionButtons(){
-				document.getElementById("hit_button").style.display = "none";
-				document.getElementById("stay_button").style.display = "none";
-				document.getElementById("double_button").style.display = "none";
-				document.getElementById("split_button").style.display = "none";
-				document.getElementById("surrender_button").style.display = "none";
-			}
 		
 		})();
 		
@@ -810,11 +802,15 @@ var trueCountApp = (function(){
 			
 		})();
 		
-		initializePlayers();
+		
 		userSettings.initializeDefaultRules();
+		blackjackGame.resetGame();
 		addEventListeners();
 		generateShoe();
-		document.getElementById("play_blackjack_div").style.display = "block";			
+		document.getElementById("play_blackjack_div").style.display = "block";
+
+		//all notifications on this overlay are time-based, so don't need button
+		document.getElementById("notification_button").style.display = "none";
 		
 		return removeEverything;
 		
@@ -933,12 +929,12 @@ var trueCountApp = (function(){
 			document.getElementById("clear_overlay").addEventListener("click", userSettings.saveRuleSelections);
 			
 			//blackjack related buttons
-			document.getElementById("deal_cards_button").addEventListener("click", blackjackGame.dealCards);
-			document.getElementById("hit_button").addEventListener("click", blackjackGame.playerHits);
-			document.getElementById("stay_button").addEventListener("click", blackjackGame.playerStays);
-			document.getElementById("double_button").addEventListener("click", blackjackGame.playerDoubles);
-			document.getElementById("split_button").addEventListener("click", blackjackGame.playerSplits);
-			document.getElementById("surrender_button").addEventListener("click", blackjackGame.playerSurrenders);
+			document.getElementsByClassName("deal_cards_button")[0].addEventListener("click", blackjackGame.dealCards);
+			document.getElementsByClassName("hit_button")[0].addEventListener("click", blackjackGame.playerHits);
+			document.getElementsByClassName("stay_button")[0].addEventListener("click", blackjackGame.playerStays);
+			document.getElementsByClassName("double_button")[0].addEventListener("click", blackjackGame.playerDoubles);
+			document.getElementsByClassName("split_button")[0].addEventListener("click", blackjackGame.playerSplits);
+			document.getElementsByClassName("surrender_button")[0].addEventListener("click", blackjackGame.playerSurrenders);
 			
 			//betting buttons
 			document.getElementById("place_chips_button").addEventListener("click", betting.placeChips);
@@ -964,12 +960,12 @@ var trueCountApp = (function(){
 			document.getElementById("clear_overlay").removeEventListener("click", userSettings.saveRuleSelections);
 			
 			//blackjack game buttons
-			document.getElementById("deal_cards_button").removeEventListener("click", blackjackGame.dealCards);
-			document.getElementById("hit_button").removeEventListener("click", blackjackGame.playerHits);
-			document.getElementById("stay_button").removeEventListener("click", blackjackGame.playerStays);
-			document.getElementById("double_button").removeEventListener("click", blackjackGame.playerDoubles);
-			document.getElementById("split_button").removeEventListener("click", blackjackGame.playerSplits);
-			document.getElementById("surrender_button").removeEventListener("click", blackjackGame.playerSurrenders);
+			document.getElementsByClassName("deal_cards_button")[0].removeEventListener("click", blackjackGame.dealCards);
+			document.getElementsByClassName("hit_button")[0].removeEventListener("click", blackjackGame.playerHits);
+			document.getElementsByClassName("stay_button")[0].removeEventListener("click", blackjackGame.playerStays);
+			document.getElementsByClassName("double_button")[0].removeEventListener("click", blackjackGame.playerDoubles);
+			document.getElementsByClassName("split_button")[0].removeEventListener("click", blackjackGame.playerSplits);
+			document.getElementsByClassName("surrender_button")[0].removeEventListener("click", blackjackGame.playerSurrenders);
 			
 			//betting buttons
 			document.getElementById("place_chips_button").removeEventListener("click", betting.placeChips);
@@ -985,97 +981,81 @@ var trueCountApp = (function(){
 	function practiceSkills(){
 		let navigationArray = ["practice_home"];
 		let flashcardArray = [];
+		let practiceDeck = [];
+		//an array where each element is an array of the result objects for that review number. 
+		//result objects have 2 attributes: result, and interval
 		let answerHistory = [];
+		
+		//stability is the standard amount of time between reviews. 
+		//stability[0] is time between new card and first review, stability[1] is between first and second review, etc.
+		//increment multiplier is the multiplier for correct answers. m[0]=(s[1]/s[0]). 
 		let spacingIncrementData = {
 			stability: [],
 			incrementMultiplier: []
 		};
 		
-		
-		document.getElementById("practice_skills_overlay").style.display = "block";
-		Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
-		document.getElementById("practice_home").style.display = "block";
-		
-		addEventListeners();
-		loadFlashcards();
-		
-		
-		return removeEverything;
-		
-		//function that gets called for all navigation buttons in the practice overlay. sets display of all displays other than selected one to "none"
-		//html navigation button values are the same as the div container ids that they navigate to 
-		function navigateTo(e){
-			Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
-			document.getElementById(e.target.value).style.display = "block";
+		var deck = (function(){
+			return {
+				initializeDeck: initializeDeck,
+				calculateOverdue: calculateOverdue,
+				displayTopCard: displayTopCard,
+				sort:			sort,
+				checkAnswer:	checkAnswer,
+			}
 			
-			navigationArray.push(e.target.value);
-		}
-		
-		//connects to server and loads flashcards from DB if they don't exist in local storage.
-		//flashcard array is an array of objects with attributes of the same name and value as columns from flashcard table in database 
-		function loadFlashcards(){
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					flashcardArray = JSON.parse(this.responseText);
-					
-					spacingIncrementData.stability.push(60000);
-					answerHistory.push(spacingIncrementData);
-					
-					flashcardArray.forEach(function(card){card.reviewNumber = 0; card.isUpdated = false; card.isNew = true;})
-				}
-			};
-			xmlhttp.open("POST", "../loadflashcards.php", true);
-			xmlhttp.send();
-		}
-		
-		//practice deck is an array of card objects loaded from server with some properties taken from database and others added in js:
-		//*****card_id, number_of_decks, dealer_hits_soft, dealer_card_value, player_hand_value, hand_type, action_id, 
-		//*****reviewNumber, isUpdated, isNew, percentOverdue
-		function basicFlashcardPractice(e){
-			let practiceDeck = [];
-			
-			//creates a practice deck and fills it with the relevant cards from flashcardArray and assigns and overdue value
-			flashcardArray.forEach(function(card){
-				if(e.target.value == card.hand_type || e.target.value == "all"){
-					if(card.isNew === false){
-						card.percentOverdue = 100*(Date.now()-card.lastSeen)/card.currentIntervalLength
-						practiceDeck.push(card);
-					}else{
-						card.percentOverdue = 100;
+			function initializeDeck(e){
+				//creates a practice deck and fills it with the relevant cards from flashcardArray and assigns and overdue value
+				practiceDeck.splice(0,practiceDeck.length);
+				flashcardArray.forEach(function(card){
+					if(e.target.value == card.hand_type || e.target.value == "all"){
 						practiceDeck.push(card);
 					}
-				}
-				
-			});
+					
+				});
+			}
 			
-			sort(practiceDeck);
-			document.getElementById("flashcard_overlay").style.display = "block";
-			displayTopCard();
-			
-			//to add:
-			//correctAnswer()
-			//incorrectAnswer()
-			
+			function calculateOverdue(){
+				practiceDeck.forEach(function(card){
+					if(card.isNew === false){
+						card.percentOverdue = 100*(Date.now()-card.lastSeen)/card.currentIntervalLength
+					}else{
+						card.percentOverdue = 100;
+					}
+				})
+			}
+					
 			function displayTopCard(){
-				
 				adjustHeaderInfo();
 				displayHands();
+				displayOptions();
+				markCorrect();
 				
 				//displays info like soft 17 rules and number of decks
 				function adjustHeaderInfo(){
 					let cardHeaders = document.getElementById("flashcard_overlay").getElementsByClassName("header2");
 					let yesNo = ["yes", "no"]
+					let afterSplit;
+					let decks = practiceDeck[0].number_of_decks
 					
-					if(practiceDeck[0].number_of_decks == 3){
-						practiceDeck[0].number_of_decks = "3+"
+					if(decks == 3){
+						decks = "3+"
 					}
-					cardHeaders[0].innerHTML = "Number Of Decks: " + practiceDeck[0].number_of_decks;
+					
+					if(practiceDeck[0].primary_action == "split" && practiceDeck[0].actionType == "primary"){
+						afterSplit = "yes";
+					}else if (practiceDeck[0].primary_action == "split" && practiceDeck[0].actionType == "secondary"){
+						afterSplit = "no";
+					}else{
+						afterSplit = yesNo[Math.floor(Math.random()*2)];
+					}
+					
+					cardHeaders[0].innerHTML = "Number Of Decks: " + decks;
 					cardHeaders[1].innerHTML = "Dealer Hits Soft 17: " + practiceDeck[0].dealer_hits_soft;
-					cardHeaders[2].innerHTML = "Double After Split Allowed: " + yesNo[Math.floor(Math.random()*2)];
+					cardHeaders[2].innerHTML = "Double After Split Allowed: " + afterSplit;
 				}	
 				
 				function displayHands(){
+					
 					//displays dealer's up card
 					let upCard = document.createElement("img");
 					let imageNumber;
@@ -1105,11 +1085,11 @@ var trueCountApp = (function(){
 					
 					switch(practiceDeck[0].hand_type){
 						case "hard":
-							if(practiceDeck[0].player_hand_value <= 11){
-								cardValue = Math.floor( Math.random()*(remainingValue-3) ) + 2;
+							if(practiceDeck[0].player_hand_value <= 12){
+								cardValue = Math.floor( Math.random()*(remainingValue-3) ) + 2;//between 2 and r.v. minus 2
 								cardArray.push(cardValue);
 								remainingValue -= cardValue;
-							}else if(practiceDeck[0].player_hand_value >= 12){
+							}else if(practiceDeck[0].player_hand_value > 12){
 								cardValue = Math.floor( Math.random()*10 ) + 1;
 								cardArray.push(cardValue);
 								remainingValue -= cardValue;
@@ -1126,55 +1106,60 @@ var trueCountApp = (function(){
 							break;
 					}
 					
-					//continues to draw cards to fill hand, making sure to avoid soft aces
-					while(remainingValue > 0){
-						if(remainingValue <= 10){
-							cardValue = Math.floor( Math.random()*(remainingValue-2) ) + 2;
-							if(cardValue === remainingValue - 1){
-								cardValue = remainingValue;
-							}
-							cardArray.push(cardValue);
-							remainingValue -= cardValue;
-						}else if(remainingValue === 11){
-							cardValue = Math.floor( Math.random()*(remainingValue-3) ) + 2;
-							cardArray.push(cardValue);
-							remainingValue -= cardValue;
-						}else if(remainingValue >= 12){
-							cardValue = Math.floor( Math.random()*10 ) + 1;
-							cardArray.push(cardValue);
-							remainingValue -= cardValue;
-						}
-					}
-					
-					//checks array to make sure there are not too many of the same value card
-					let tooManyCards;
-					do{
-						tooManyCards = false;
-						cardArray.forEach(function (card){
-							let count = 0;
-							let numberOfDecks = practiceDeck[0].number_of_decks;
-							
-							//too many copies of a card only possible for 1 deck: card value<=5 and 2deck:cardValue<=2
-							if(card <= 8-3*numberOfDecks){
-								cardArray.forEach(function (item){
-									if(item === card){ count++;};
-								});
-								
-								if(count>4*numberOfDecks || (count === 4*numberOfDecks - 1 && practiceDeck[0].dealer_card_value === card)){
-									tooManyCards = true;
-									let value = card;
-									card *= 2;
-									cardArray.forEach(function (item){
-										if(item === value){
-											cardArray.splice(cardArray.indexOf(item), 1);
-											value = 0;
-										}
-									})
+					if(practiceDeck[0].actionType == "secondary" && 
+					(practiceDeck[0].secondary_action == "hit" || practiceDeck[0].secondary_action == "stay" )){
+						//continues to draw cards to fill hand, making sure to avoid soft aces
+						while(remainingValue > 0){
+							if(remainingValue <= 10){
+								cardValue = Math.floor( Math.random()*(remainingValue-2) ) + 2;
+								if(cardValue === remainingValue - 1){
+									cardValue = remainingValue;
 								}
+								cardArray.push(cardValue);
+								remainingValue -= cardValue;
+							}else if(remainingValue === 11){
+								cardValue = Math.floor( Math.random()*(remainingValue-3) ) + 2;
+								cardArray.push(cardValue);
+								remainingValue -= cardValue;
+							}else if(remainingValue >= 12){
+								cardValue = Math.floor( Math.random()*10 ) + 1;
+								cardArray.push(cardValue);
+								remainingValue -= cardValue;
 							}
-							
-						});
-					}while(tooManyCards === true);
+						}
+						
+						//checks array to make sure there are not too many of the same value card
+						let tooManyCards;
+						do{
+							tooManyCards = false;
+							cardArray.forEach(function (card){
+								let count = 0;
+								let numberOfDecks = practiceDeck[0].number_of_decks;
+								
+								//too many copies of a card only possible for 1 deck: card value<=5 and 2deck:cardValue<=2
+								if(card <= 8-3*numberOfDecks){
+									cardArray.forEach(function (item){
+										if(item === card){ count++;};
+									});
+									
+									if(count>4*numberOfDecks || (count === 4*numberOfDecks - 1 && practiceDeck[0].dealer_card_value === card)){
+										tooManyCards = true;
+										let value = card;
+										card *= 2;
+										cardArray.forEach(function (item){
+											if(item === value){
+												cardArray.splice(cardArray.indexOf(item), 1);
+												value = 0;
+											}
+										})
+									}
+								}
+								
+							});
+						}while(tooManyCards === true);
+					}else if(remainingValue != 0){
+						cardArray.push(remainingValue);
+					}
 					
 					//display cards on screen
 					cardArray.forEach(function (card){
@@ -1184,7 +1169,18 @@ var trueCountApp = (function(){
 						if(card === 11 || card === 1){
 							imageNumber = Math.floor(Math.random()*4)*13 + 1;
 						}else if(card === 10){
-							imageNumber = Math.floor(Math.random()*4)*13 + 10 + Math.floor(Math.random()*4);
+							if(practiceDeck[0].hand_type != "split"){
+								imageNumber = Math.floor(Math.random()*4)*13 + 10 + Math.floor(Math.random()*4);
+							}else{
+								if(cardArray.indexOf(card) === 0){
+									imageNumber = Math.floor(Math.random()*4)*13 + 10 + Math.floor(Math.random()*4);
+								}else if(cardArray.indexOf(card) === 1){
+									imageNumber = imageArray[0] + Math.floor(Math.random()*4)*13;
+									if(imageNumber != 52){
+										imageNumber %= 52;
+									}
+								}
+							}
 						}else{
 							imageNumber = Math.floor(Math.random()*4)*13 + card;
 						}
@@ -1219,10 +1215,65 @@ var trueCountApp = (function(){
 					
 					});
 				}	
+			
+				function displayOptions(){
+					let flashcard = document.getElementById("flashcard_overlay");
+					
+					flashcard.getElementsByClassName("hit_button")[0].style.display = "inline-block";
+					flashcard.getElementsByClassName("stay_button")[0].style.display = "inline-block";
+					
+					//check for double
+					flashcard.getElementsByClassName("double_button")[0].style.display = "inline-block";
+					if(practiceDeck[0].actionType == "secondary" && practiceDeck[0].hand_type != "split"){
+						flashcard.getElementsByClassName("double_button")[0].style.display = "none";
+					}
+					
+					//check for split
+					if(practiceDeck[0].hand_type == "split"){
+						flashcard.getElementsByClassName("split_button")[0].style.display = "inline-block";
+					}else{
+						flashcard.getElementsByClassName("split_button")[0].style.display = "none";
+					}
+					
+					//check for surrender
+					flashcard.getElementsByClassName("surrender_button")[0].style.display = "inline-block";
+					if(practiceDeck[0].actionType == "secondary" && practiceDeck[0].hand_type != "split"){
+						flashcard.getElementsByClassName("surrender_button")[0].style.display = "none";
+					}
+					
+				}
+					
+				//assigng the correct button's value to "correct" and all other button values to "incorrect", 
+				function markCorrect(){
+					let flashcard = document.getElementById("flashcard_overlay");
+					let className;
+					if(practiceDeck[0].actionType == "primary"){
+						className = practiceDeck[0].primary_action + "_button";
+					}else{
+						className = practiceDeck[0].secondary_action + "_button";
+					}
+					flashcard.getElementsByClassName("hit_button")[0].value = "incorrect";
+					flashcard.getElementsByClassName("stay_button")[0].value = "incorrect";
+					flashcard.getElementsByClassName("double_button")[0].value = "incorrect";
+					flashcard.getElementsByClassName("split_button")[0].value = "incorrect";
+					flashcard.getElementsByClassName("surrender_button")[0].value = "incorrect";
+					
+					flashcard.getElementsByClassName(className)[0].value = "correct";
+				}
+				
 			}
 			
 			//sorts an array of cards based on percent overdue value
 			function sort(array){
+				
+				//shuffles the array before sorting so that card order is randomized for cards with same overdue percent
+				for (let i=0; i<array.length; i++){
+					index = Math.floor( Math.random()*(array.length-i) );
+					array.push(array[index]);
+					array.splice(index,1);
+				}
+				
+				
 				let a1 = [];
 				let a2 = [];
 				
@@ -1284,6 +1335,269 @@ var trueCountApp = (function(){
 				}
 				
 			}
+			
+			function checkAnswer(e){
+				let reviewNumber = practiceDeck[0].reviewNumber;
+				let time;
+				if(practiceDeck[0].isNew === true){
+					time = 1;
+				}else{
+					time = Date.now()-practiceDeck[0].lastSeen;
+				}
+				
+				displayNotification()
+				
+				practiceDeck[0].isUpdated = true;
+				practiceDeck[0].isNew = false;
+				practiceDeck[0].lastSeen = Date.now();
+				
+				calculateSpacingIncrements();
+				calculateInterval();	//also adjusts review number
+				calculateOverdue()
+				sort(practiceDeck);
+				
+				let removableItems = document.getElementById("flashcard_overlay").getElementsByClassName("remove");
+				for(i=0; i<removableItems.length; ){
+					removableItems[i].parentNode.removeChild(removableItems[i]);
+				}
+				
+				displayTopCard();
+				
+				function calculateInterval(){
+					if(e.target.value == "correct"){
+						//sets next review interval for this card
+						if(reviewNumber != 0){
+							let prevInterval = practiceDeck[0].currentIntervalLength;
+							let multiplier = spacingIncrementData.incrementMultiplier[reviewNumber-1];
+							
+							while(time > prevInterval){
+								time -= prevInterval;
+								prevInterval *= multiplier;
+							}
+							
+							practiceDeck[0].currentIntervalLength = prevInterval * multiplier**(time/prevInterval);
+							
+						}else{
+							practiceDeck[0].currentIntervalLength = spacingIncrementData.stability[0]
+						}
+						
+						practiceDeck[0].reviewNumber++;
+						
+					}else if(e.target.value == "incorrect"){
+						
+						practiceDeck[0].reviewNumber = 1;
+						practiceDeck[0].currentIntervalLength = spacingIncrementData.stability[0];
+					}					
+				}
+				
+				//updates data to the answer history array and calculated the interval spacing
+				function calculateSpacingIncrements(){
+					//adds data to answer history
+					if(answerHistory.length === reviewNumber){
+						answerHistory.push([]);
+					}
+					
+					answerHistory[reviewNumber].push({result: e.target.value, interval: time});
+					
+					//adds initial multiplier
+					if(spacingIncrementData.incrementMultiplier.length === reviewNumber){
+						spacingIncrementData.incrementMultiplier.push(1.1);
+						
+						let stability = spacingIncrementData.stability[reviewNumber];
+						stability *= spacingIncrementData.incrementMultiplier[reviewNumber];
+						
+						spacingIncrementData.stability.push(stability);
+					}
+					
+					//calculates stability[r-1] and multiplier[r-2] for this review number
+					if(reviewNumber > 0){
+						let correctCount = 0;
+						answerHistory[reviewNumber].forEach(function(review){
+							if(review.result == "correct"){
+								correctCount++;
+							}
+						});
+						
+						if(correctCount > 10){
+							//calculate stability[reviewNumber-1]
+							let stability = spacingIncrementData.stability[reviewNumber-1];
+							let actualCorrect = correctCount;
+							let expectedCorrect = 0;
+							
+							answerHistory[reviewNumber].forEach(function(review){
+								expectedCorrect += 0.9**(review.time/stability);
+							})
+							
+							spacingIncrementData.stability[reviewNumber-1] = stability * ( Math.log(expectedCorrect)/Math.log(actualCorrect) );
+							
+							if(reviewNumber >= 2){
+								let stability1 = stability;
+								let stability2 = spacingIncrementData.stability[reviewNumber];
+								spacingIncrementData.incrementMultiplier[reviewNumber-2] = stability1/stability2;
+							}
+						}
+					}
+				}
+			
+				function displayNotification(){
+					if(e.target.value == "incorrect"){
+						let overlay = document.getElementById("notification_overlay");
+						let header = document.getElementById("notification_text");
+						let noteText;
+						let card = practiceDeck[0];
+						let yourHand;
+						let deckNumber;
+						let hitsOrStays = card.dealer_hits_soft
+						let properAction;
+						
+						//assigns string value to yourHand
+						switch (card.hand_type){
+							case "hard":
+								yourHand = "hard " + card.player_hand_value;
+								break;
+							case "soft":
+								yourHand = "soft " + card.player_hand_value;
+								break;
+							case "split":
+								let splitCard = card.player_hand_value/2;
+								
+								if(splitCard === 10){
+									splitCard = "10-value cards"
+								}else if(splitCard === 11){
+									splitCard = "aces"
+								}else{
+									splitCard += "'s"
+								}
+								yourHand = "pair of " + splitCard
+								break;
+						}
+						
+						//assigns string value to deckNumber
+						switch (card.number_of_decks){
+							case 1:
+								deckNumber = "single-deck"
+								break;
+							case 2:
+								deckNumber = "2-deck"
+								break;
+							case 3:
+								deckNumber = "multi-deck"
+								break;
+						}
+						
+						if(hitsOrStays == "yes"){
+							hitsOrStays = "hits";
+						}else{
+							hitsOrStays = "stays";
+						}
+						
+						//assigns string value to properAction
+						switch (card.primary_action){
+							case "hit":
+								properAction = "always hit";
+								break;
+							case "stay":
+								properAction = "always stay";
+								break;
+							case "double":
+								properAction = "double when possible, otherwise " + card.secondary_action;
+								break;
+							case "split":
+								if(card.primary_action === card.secondary_action){
+									properAction = "always split";
+								}else{
+									properAction = "split when doubling after split is allowed, otherwise " + card.secondary_action;
+								}
+								break;
+							case "surrender":
+								properAction = "surrender when possible, otherwise " + card.secondary_action;
+								break;
+						}
+						
+						overlay.style.display = "block";
+						
+						noteText = "When the dealer's up card is " + card.dealer_card_value + " and you have a " + yourHand + "<br>";
+						noteText += " in a " + deckNumber + " game where the dealer " + hitsOrStays + " on a soft 17,<br>";
+						noteText += " you should " + properAction + ".";
+
+						header.innerHTML = noteText;
+						
+					}
+					
+					
+				}
+			}
+			
+		})();
+		
+		
+		document.getElementById("practice_skills_overlay").style.display = "block";
+		
+		//notificaitons on this overlay are closed by pressing the button
+		document.getElementById("notification_button").style.display = "block";
+		
+		Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
+		document.getElementById("practice_home").style.display = "block";
+		
+		addEventListeners();
+		loadFlashcards();
+		
+		
+		return removeEverything;
+		
+		//function that gets called for all navigation buttons in the practice overlay. sets display of all displays other than selected one to "none"
+		//html navigation button values are the same as the div container ids that they navigate to 
+		function navigateTo(e){
+			Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
+			document.getElementById(e.target.value).style.display = "block";
+			
+			navigationArray.push(e.target.value);
+		}
+		
+		//connects to server and loads flashcards from DB if they don't exist in local storage.
+		//flashcard array is an array of objects with attributes of the same name and value as columns from flashcard table in database 
+		function loadFlashcards(){
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					flashcardArray = JSON.parse(this.responseText);
+					
+					spacingIncrementData.stability.push(60000);
+					
+					let copyArray = [];
+					
+					flashcardArray.forEach(function(card){
+						card.reviewNumber = 0; 
+						card.isUpdated = false; 
+						card.isNew = true;
+						card.actionType = "primary";
+						
+						
+						let copy = {};
+						Object.assign(copy, card);
+						copy.actionType = "secondary";
+						copyArray.push(copy);
+					
+						
+					})
+					
+					copyArray.forEach(function (card){ flashcardArray.push(card)});
+				}
+			};
+			xmlhttp.open("POST", "../loadflashcards.php", true);
+			xmlhttp.send();
+		}
+		
+		//practice deck is an array of card objects loaded from server with some properties taken from database and others added in js:
+		//*****card_id, number_of_decks, dealer_hits_soft, dealer_card_value, player_hand_value, hand_type, primary_action, secondary_action
+		//*****reviewNumber, isUpdated, isNew, percentOverdue, actionType, (lastSeen and currentIntervalLength are added after card is first learned)
+		function basicFlashcardPractice(e){
+			deck.initializeDeck(e);
+			deck.calculateOverdue();
+			deck.sort(practiceDeck);
+			deck.displayTopCard();
+			document.getElementById("flashcard_overlay").style.display = "block";
+			
 		}
 		
 		function quickstartPracticeSession(){
@@ -1304,6 +1618,8 @@ var trueCountApp = (function(){
 			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.addEventListener("click", basicFlashcardPractice)});
 			Array.from(document.getElementsByClassName("exit_button")).forEach(function(btn){btn.addEventListener("click", exit)});
 			
+			document.getElementById("flashcard_overlay").getElementsByClassName("player_options_button_container")[0].addEventListener("click", deck.checkAnswer);
+			
 		}
 		
 		function removeEverything(){
@@ -1313,6 +1629,8 @@ var trueCountApp = (function(){
 			document.getElementById("practice_quickstart_button").removeEventListener("click", quickstartPracticeSession);
 			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.removeEventListener("click", basicFlashcardPractice)});
 			Array.from(document.getElementsByClassName("exit_button")).forEach(function(btn){btn.removeEventListener("click", exit)});
+			
+			document.getElementById("flashcard_overlay").getElementsByClassName("player_options_button_container")[0].removeEventListener("click", deck.checkAnswer);
 		}
 		
 	}

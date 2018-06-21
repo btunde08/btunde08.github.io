@@ -15,8 +15,9 @@
 			</ul>
 			
 			<!--##################Notification Overlay for use throughout game################## -->
-			<div id="notification_overlay">
+			<div id="notification_overlay" class="center">
 				<p id="notification_text" class="header1"></p>
+				<button id="notification_button" type="button" class="exit_button" value="notification_overlay">Okay</button>
 			</div>
 			
 			<!--#############################Play Blackjack Overlay############################## -->
@@ -35,16 +36,16 @@
 				
 				<div id="main_player_hands"></div>
 				
-				<div id="player_options_button_container">
+				<div class="player_options_button_container">
 					<p id="bet_amount_notification" class="small_note">
 						Bet Must be between $<span id="bet_min_note"></span> and $<span id="bet_max_note"></span>.
 					</p>
-					<button id="deal_cards_button" type="button">Deal</button>
-					<button id="hit_button" type="button" class="player_options_button">Hit</button>
-					<button id="stay_button" type="button" class="player_options_button">Stay</button>
-					<button id="double_button" type="button" class="player_options_button">Double</button>
-					<button id="split_button" type="button" class="player_options_button">Split</button>
-					<button id="surrender_button" type="button" class="player_options_button">Surrender</button>
+					<button class="deal_cards_button" type="button">Deal</button>
+					<button class="hit_button" type="button" >Hit</button>
+					<button class="stay_button" type="button" >Stay</button>
+					<button class="double_button" type="button" >Double</button>
+					<button class="split_button" type="button" >Split</button>
+					<button class="surrender_button" type="button" >Surrender</button>
 				</div>
 				<div class="chips_container" id="player_chips_container">
 					<p class="header3">Bankroll: $<span id="bankroll">1000</span></p>
@@ -239,7 +240,13 @@
 					<br>
 					<div class="hand_of_cards center"></div>
 					<br>
-					
+					<div class="player_options_button_container">
+						<button class="hit_button" type="button" >Hit</button>
+						<button class="stay_button" type="button" >Stay</button>
+						<button class="double_button" type="button" >Double</button>
+						<button class="split_button" type="button" >Split</button>
+						<button class="surrender_button" type="button" >Surrender</button>
+					</div>
 					
 				</div>
 			</div>
