@@ -39,6 +39,7 @@
 	color: white;
 	width: 100%;
 	text-align: left;
+	z-index: auto;
 }
 .header1{
 	font-size: 32px;
@@ -120,6 +121,7 @@
 	display: block;
 	position: relative;
 	left: calc(50% - 100px);
+	z-index: auto;
 	
 }
 #notification_overlay {
@@ -137,7 +139,7 @@
 	text-align:center;
 	overflow:scroll;
 }
-#clear_overlay{
+.clear_overlay{
 	border: solid;
 	height: 100%;
 	width: 100%;
@@ -207,6 +209,9 @@
 /* Atomic CSS for use on multiple pages*/
 .hidden{
 	display: none;
+}
+.half_width{
+	width: 50%;
 }
 .center{
 	text-align: center;

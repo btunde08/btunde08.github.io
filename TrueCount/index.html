@@ -64,7 +64,7 @@
 					<button type="button" id="place_chips_button">Place Chips</button>
 				</div>
 				<!--#############################Rules Overlay############################## -->
-				<div id="clear_overlay"></div>
+				<div id="clear_overlay" class="clear_overlay"></div>
 				
 				<div id="rules_overlay" class="settings_overlay">
 					<p class="header1">Select House Rules</p>
@@ -203,6 +203,7 @@
 				
 				<ul class="options_menu">
 					<li><button class="return_to_menu_button" type="button">Main Menu</button></li>
+					<li><button id="practice_rules_button" type="button">Select Rules</button></li>
 				</ul>
 				
 				<ul id="practice_home" class="center_navigation">
@@ -225,6 +226,38 @@
 				<div class="center">
 						<button type="button" id="practice_quickstart_button">Quick Start</button>
 				</div>
+				
+				<div class="clear_overlay"></div>
+				<div class="settings_overlay">
+					<p class="header2">
+						What rules would you like to practice?
+					</p>
+					<form>
+						<p>What type of game?
+							<select id="practice_deck_count" class="practice_rule">
+								<option value="1" selected>Single-Deck</option>
+								<option value="2">Double-Deck</option>
+								<option value="3">Multi-Deck</option>
+								<option value="all">All</option>
+							</select>
+						</p>
+						<p>Dealer Hits Soft 17?
+							<select id="practice_hit_soft" class="practice_rule">
+								<option value="no">No</option>
+								<option value="yes" selected>Yes</option>
+								<option value="all">Both</option>
+							</select>
+						</p>
+						<p>Double After Split Allowed?
+							<select id="practice_das" class="practice_rule">
+								<option value="no">No</option>
+								<option value="yes" selected>Yes</option>
+								<option value="all">Both</option>
+							</select>
+						</p>
+					</form>
+				</div>
+				
 				
 				<!-- ############################ flashcard overlay ######################## -->
 				<div id="flashcard_overlay">

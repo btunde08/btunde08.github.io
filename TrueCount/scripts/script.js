@@ -69,7 +69,7 @@ var trueCountApp = (function(){
 				cancelRuleSelection: cancelRuleSelection
 			}
 			
-			//reads the default html values for the rules and saves them into session storage as "defaultRules"
+			//reads the default html values for the rules and saves them into local storage as "defaultRules"
 			function initializeDefaultRules(){
 				let defaultRules = [];
 				let jsonDefaultRules;
@@ -83,12 +83,12 @@ var trueCountApp = (function(){
 				
 				Array.from(document.getElementsByClassName("rule")).forEach(function(rule){defaultRules.push(rule.value)});
 				jsonDefaultRules = JSON.stringify(defaultRules);
-				sessionStorage.setItem("defaultRules", jsonDefaultRules);
+				localStorage.setItem("defaultRules", jsonDefaultRules);
 				
-				//overwrites default rules with sessionStorage if they exist
+				//overwrites default rules with localStorage if they exist
 				let blackjackRules;
-				if(sessionStorage.blackjackRules){
-					blackjackRules = JSON.parse(sessionStorage.blackjackRules);
+				if(localStorage.blackjackRules){
+					blackjackRules = JSON.parse(localStorage.blackjackRules);
 					for(let i=0; i<blackjackRules.length;i++){
 						document.getElementsByClassName("rule")[i].value = blackjackRules[i];
 					}
@@ -126,8 +126,8 @@ var trueCountApp = (function(){
 					Array.from(document.getElementsByClassName("rule")).forEach(function(rule){blackjackRules.push(rule.value)});
 					jsonBlackjackRules = JSON.stringify(blackjackRules);
 					
-					if(sessionStorage.blackjackRules != jsonBlackjackRules){
-						sessionStorage.setItem("blackjackRules", jsonBlackjackRules);
+					if(localStorage.blackjackRules != jsonBlackjackRules){
+						localStorage.setItem("blackjackRules", jsonBlackjackRules);
 						generateShoe();
 					}
 					
@@ -196,8 +196,8 @@ var trueCountApp = (function(){
 				
 				let defaultRules;
 				
-				if(sessionStorage.defaultRules){
-					defaultRules = JSON.parse(sessionStorage.defaultRules);
+				if(localStorage.defaultRules){
+					defaultRules = JSON.parse(localStorage.defaultRules);
 					for(let i=0; i<defaultRules.length;i++){
 						document.getElementsByClassName("rule")[i].value = defaultRules[i];
 					}
@@ -212,10 +212,10 @@ var trueCountApp = (function(){
 				document.getElementById("clear_overlay").style.display = "none";
 				document.getElementById("rules_overlay").style.display = "none";
 				
-				//overwrites rules with sessionStorage if they exist
+				//overwrites rules with localStorage if they exist
 				let blackjackRules;
-				if(sessionStorage.blackjackRules){
-					blackjackRules = JSON.parse(sessionStorage.blackjackRules);
+				if(localStorage.blackjackRules){
+					blackjackRules = JSON.parse(localStorage.blackjackRules);
 					for(let i=0; i<blackjackRules.length;i++){
 						document.getElementsByClassName("rule")[i].value = blackjackRules[i];
 					}
@@ -1006,8 +1006,21 @@ var trueCountApp = (function(){
 			function initializeDeck(e){
 				//creates a practice deck and fills it with the relevant cards from flashcardArray and assigns and overdue value
 				practiceDeck.splice(0,practiceDeck.length);
+				
+				let deckCount = document.getElementById("practice_deck_count").value;
+				let hitSoft = document.getElementById("practice_hit_soft").value;
+				let das = document.getElementById("practice_das").value;
+				
 				flashcardArray.forEach(function(card){
-					if(e.target.value == card.hand_type || e.target.value == "all"){
+					let booleanCheck = (e.target.value == card.hand_type || e.target.value == "all");
+					booleanCheck *= (deckCount == card.number_of_decks || deckCount === "all");
+					booleanCheck *= (hitSoft === card.dealer_hits_soft || hitSoft === "all");
+					if(card.hand_type === "split"){
+						booleanCheck *= (das === "no" && card.actionType === "secondary") || (das === "yes" && card.actionType === "primary") 
+							|| (das === "all");
+					}
+					
+					if( booleanCheck){
 						practiceDeck.push(card);
 					}
 					
@@ -1036,17 +1049,23 @@ var trueCountApp = (function(){
 					let yesNo = ["yes", "no"]
 					let afterSplit;
 					let decks = practiceDeck[0].number_of_decks
+					let das = document.getElementById("practice_das").value;
 					
 					if(decks == 3){
 						decks = "3+"
 					}
-					
-					if(practiceDeck[0].primary_action == "split" && practiceDeck[0].actionType == "primary"){
+					if(das === "yes"){
 						afterSplit = "yes";
-					}else if (practiceDeck[0].primary_action == "split" && practiceDeck[0].actionType == "secondary"){
+					}else if(das === "no"){
 						afterSplit = "no";
-					}else{
-						afterSplit = yesNo[Math.floor(Math.random()*2)];
+					}else if (das === "all"){
+						if(practiceDeck[0].primary_action == "split" && practiceDeck[0].actionType == "primary"){
+							afterSplit = "yes";
+						}else if (practiceDeck[0].primary_action == "split" && practiceDeck[0].actionType == "secondary"){
+							afterSplit = "no";
+						}else{
+							afterSplit = yesNo[Math.floor(Math.random()*2)];
+						}
 					}
 					
 					cardHeaders[0].innerHTML = "Number Of Decks: " + decks;
@@ -1604,6 +1623,36 @@ var trueCountApp = (function(){
 			// checks user progress in the various categories and automatically directs to the one most needed
 		}
 		
+		function selectRules(){
+			document.getElementById("practice_skills_overlay").getElementsByClassName("settings_overlay")[0].style.display = "block";
+			document.getElementById("practice_skills_overlay").getElementsByClassName("clear_overlay")[0].style.display = "block";
+			
+			let practiceRules;
+			if(localStorage.practiceRules){
+				practiceRules = JSON.parse(localStorage.practiceRules);
+				for(let i=0; i<practiceRules.length;i++){
+					document.getElementsByClassName("practice_rule")[i].value = practiceRules[i];
+				}
+			}
+			
+		}
+		
+		function saveSelection(){
+			document.getElementById("practice_skills_overlay").getElementsByClassName("settings_overlay")[0].style.display = "none";
+			document.getElementById("practice_skills_overlay").getElementsByClassName("clear_overlay")[0].style.display = "none";
+			
+			let practiceRules = [];
+			let jsonPracticeRules;
+			Array.from(document.getElementsByClassName("practice_rule")).forEach(function(rule){practiceRules.push(rule.value)});
+				jsonPracticeRules = JSON.stringify(practiceRules);
+				
+				if(localStorage.practiceRules != jsonPracticeRules){
+					localStorage.setItem("practiceRules", jsonPracticeRules);
+				}
+				
+			deck.initializeDeck();
+		}
+		
 		function goBackOne(){
 			Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
 			document.getElementById(navigationArray[navigationArray.length-2]).style.display = "block";
@@ -1617,8 +1666,10 @@ var trueCountApp = (function(){
 			document.getElementById("practice_quickstart_button").addEventListener("click", quickstartPracticeSession);
 			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.addEventListener("click", basicFlashcardPractice)});
 			Array.from(document.getElementsByClassName("exit_button")).forEach(function(btn){btn.addEventListener("click", exit)});
+			document.getElementById("practice_rules_button").addEventListener("click", selectRules);
 			
 			document.getElementById("flashcard_overlay").getElementsByClassName("player_options_button_container")[0].addEventListener("click", deck.checkAnswer);
+			document.getElementById("practice_skills_overlay").getElementsByClassName("clear_overlay")[0].addEventListener("click", saveSelection);
 			
 		}
 		
@@ -1629,8 +1680,10 @@ var trueCountApp = (function(){
 			document.getElementById("practice_quickstart_button").removeEventListener("click", quickstartPracticeSession);
 			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.removeEventListener("click", basicFlashcardPractice)});
 			Array.from(document.getElementsByClassName("exit_button")).forEach(function(btn){btn.removeEventListener("click", exit)});
+			document.getElementById("practice_rules_button").removeEventListener("click", selectRules);
 			
 			document.getElementById("flashcard_overlay").getElementsByClassName("player_options_button_container")[0].removeEventListener("click", deck.checkAnswer);
+			document.getElementById("practice_skills_overlay").getElementsByClassName("clear_overlay")[0].removeEventListener("click", saveSelection);
 		}
 		
 	}
