@@ -139,6 +139,11 @@
 	text-align:center;
 	overflow:scroll;
 }
+#notification_button{
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .clear_overlay{
 	border: solid;
 	height: 100%;

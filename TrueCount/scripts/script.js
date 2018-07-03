@@ -21,6 +21,7 @@ var trueCountApp = (function(){
 		eventsToRemove = [];
 	}
 	
+	//exits the current overlay without returning to main menu.
 	function exit(e){
 		
 		let removableItems = document.getElementById(e.target.value).getElementsByClassName("remove");
@@ -30,6 +31,7 @@ var trueCountApp = (function(){
 		document.getElementById(e.target.value).style.display = "none";
 		
 	}
+	
 	//clears all tab content on same layer, then uses the html name property of the clicked tab button to select which elements to be displayed
 	function changeTab(e){
 		Array.from(document.getElementsByClassName("tab_content")).forEach(function(item){
@@ -700,7 +702,7 @@ var trueCountApp = (function(){
 			
 			function handOutcome(outcome){
 				let winnings = Math.ceil(betAmount * mainPlayer.handPayoutFactor[mainPlayer.activeHandIndex]);
-				let notificationText = outcome + "\n" + "You Get $" + winnings + "!"
+				let notificationText = outcome + "<br>" + "You Get $" + winnings + "!"
 				
 				document.getElementById("notification_text").innerHTML = notificationText;
 				document.getElementById("notification_overlay").style.display = "block";
@@ -978,6 +980,7 @@ var trueCountApp = (function(){
 	
 	}
 
+	//everything related to the practice section
 	function practiceSkills(){
 		let navigationArray = ["practice_home"];
 		let flashcardArray = [];
@@ -1010,9 +1013,10 @@ var trueCountApp = (function(){
 				let deckCount = document.getElementById("practice_deck_count").value;
 				let hitSoft = document.getElementById("practice_hit_soft").value;
 				let das = document.getElementById("practice_das").value;
+				let handType = e.target.value;
 				
 				flashcardArray.forEach(function(card){
-					let booleanCheck = (e.target.value == card.hand_type || e.target.value == "all");
+					let booleanCheck = (handType == card.hand_type || handType == "all");
 					booleanCheck *= (deckCount == card.number_of_decks || deckCount === "all");
 					booleanCheck *= (hitSoft === card.dealer_hits_soft || hitSoft === "all");
 					if(card.hand_type === "split"){
@@ -1363,26 +1367,38 @@ var trueCountApp = (function(){
 				}else{
 					time = Date.now()-practiceDeck[0].lastSeen;
 				}
-				
-				displayNotification()
-				
-				practiceDeck[0].isUpdated = true;
-				practiceDeck[0].isNew = false;
-				practiceDeck[0].lastSeen = Date.now();
-				
-				calculateSpacingIncrements();
-				calculateInterval();	//also adjusts review number
-				calculateOverdue()
-				sort(practiceDeck);
-				
-				let removableItems = document.getElementById("flashcard_overlay").getElementsByClassName("remove");
-				for(i=0; i<removableItems.length; ){
-					removableItems[i].parentNode.removeChild(removableItems[i]);
+					
+				if(e.target.type == "button"){
+					
+					displayNotification()
+					
+					practiceDeck[0].isUpdated = true;
+					practiceDeck[0].isNew = false;
+					practiceDeck[0].lastSeen = Date.now();
+					
+					calculateSpacingIncrements();
+					calculateInterval();	//also adjusts review number
+					calculateOverdue()
+					flashcardArray[practiceDeck[0].card_id-1] = practiceDeck[0];
+					
+					localStorage.setItem("basicFlashcards", JSON.stringify(flashcardArray));
+					localStorage.setItem("answerHistory", JSON.stringify(answerHistory));
+					
+					sort(practiceDeck);
+					
+					if(e.target.value == "correct"){
+						
+						let removableItems = document.getElementById("flashcard_overlay").getElementsByClassName("remove");
+						for(i=0; i<removableItems.length; ){
+							removableItems[i].parentNode.removeChild(removableItems[i]);
+						}
+						
+						deck.displayTopCard();
+					}
 				}
 				
-				displayTopCard();
-				
 				function calculateInterval(){
+					
 					if(e.target.value == "correct"){
 						//sets next review interval for this card
 						if(reviewNumber != 0){
@@ -1411,6 +1427,7 @@ var trueCountApp = (function(){
 				
 				//updates data to the answer history array and calculated the interval spacing
 				function calculateSpacingIncrements(){
+					
 					//adds data to answer history
 					if(answerHistory.length === reviewNumber){
 						answerHistory.push([]);
@@ -1462,88 +1479,194 @@ var trueCountApp = (function(){
 					if(e.target.value == "incorrect"){
 						let overlay = document.getElementById("notification_overlay");
 						let header = document.getElementById("notification_text");
-						let noteText;
+						let noteText = "";
 						let card = practiceDeck[0];
-						let yourHand;
-						let deckNumber;
-						let hitsOrStays = card.dealer_hits_soft
-						let properAction;
 						
-						//assigns string value to yourHand
-						switch (card.hand_type){
-							case "hard":
-								yourHand = "hard " + card.player_hand_value;
-								break;
-							case "soft":
-								yourHand = "soft " + card.player_hand_value;
-								break;
-							case "split":
-								let splitCard = card.player_hand_value/2;
-								
-								if(splitCard === 10){
-									splitCard = "10-value cards"
-								}else if(splitCard === 11){
-									splitCard = "aces"
-								}else{
-									splitCard += "'s"
-								}
-								yourHand = "pair of " + splitCard
-								break;
-						}
-						
-						//assigns string value to deckNumber
-						switch (card.number_of_decks){
-							case 1:
-								deckNumber = "single-deck"
-								break;
-							case 2:
-								deckNumber = "2-deck"
-								break;
-							case 3:
-								deckNumber = "multi-deck"
-								break;
-						}
-						
-						if(hitsOrStays == "yes"){
-							hitsOrStays = "hits";
-						}else{
-							hitsOrStays = "stays";
-						}
-						
-						//assigns string value to properAction
-						switch (card.primary_action){
-							case "hit":
-								properAction = "always hit";
-								break;
-							case "stay":
-								properAction = "always stay";
-								break;
-							case "double":
-								properAction = "double when possible, otherwise " + card.secondary_action;
-								break;
-							case "split":
-								if(card.primary_action === card.secondary_action){
-									properAction = "always split";
-								}else{
-									properAction = "split when doubling after split is allowed, otherwise " + card.secondary_action;
-								}
-								break;
-							case "surrender":
-								properAction = "surrender when possible, otherwise " + card.secondary_action;
-								break;
-						}
-						
+						document.getElementById("notification_button").addEventListener("click", closeNotification);
 						overlay.style.display = "block";
 						
-						noteText = "When the dealer's up card is " + card.dealer_card_value + " and you have a " + yourHand + "<br>";
-						noteText += " in a " + deckNumber + " game where the dealer " + hitsOrStays + " on a soft 17,<br>";
-						noteText += " you should " + properAction + ".";
+						//all the cases for notification text
+						if(card.hand_type == "split"){
+							if(card.player_hand_value === 4){
+								if(card.dealer_card_value === 2){
+									noteText = "A pair of twos against a dealer's 2 up should only be split if doubling after split is allowed<br>";
+									noteText += "Otherwise hit."
+								}else if(card.dealer_card_value === 3){
+									noteText = "A pair of twos vs 3 up should always be split in single-deck games, <br>";
+									noteText += "But in games with 2 or more decks, you should only split if DAS is allowed. Otherwise hit.";
+								}else if (card.dealer_card_value >= 4){
+									noteText = "A pair of twos should always be split if the dealer's card is between 4 and 7 <br>";
+									noteText += "But if it's greater than 7, you should hit.";
+								}
+							}else if(card.player_hand_value === 6){
+								if(card.dealer_card_value <= 3){	
+									noteText = "If the dealer has a 2 or 3 showing, a pair of threes should be split only when DAS is allowed, <br>";
+									noteText += "Otherwise hit.";
+								}else if(card.dealer_card_value <= 7){
+									noteText = "A pair of threes should always be split against a dealer card between 4 and 7.";
+								}else if(card.dealer_card_value === 8){
+									noteText = "In single-deck games, a pair of threes vs 8 should be split only when DAS is allowed, otherwise hit.<br>";
+									noteText += "For 2 or more decks, always hit.";
+								}else if(card.dealer_card_value >= 9){
+									noteText = "Always hit a pair of threes if the dealer's up card is 9 or greater.";
+								}
+							}else if(card.player_hand_value === 8){
+								if(card.number_of_decks === 1){
+									noteText = "In single-deck games, a pair of fours should only be split when DAS is allowed, <br>";
+									noteText += "And only with a 4, 5, or 6 showing. All other up cards should be hit.<br>";
+									noteText += "If DAS is not allowed, hit against 4, but double against 5 or 6.";
+								}else{
+									noteText = "In games with 2 or more decks, you should split a pair of fours if DAS is allowed<br>";
+									noteText += "And the up card is a 4, 5, or 6. Any other case should be hit.";
+								}
+							}else if(card.player_hand_value === 10){
+								noteText = "A pair of fives should be treated like a hard hand, never split.<br>";
+								noteText += "This means double against 9 or less, and hit against 10 or ace.";
+							}else if(card.player_hand_value === 12){
+								if(card.number_of_decks <= 2){
+									if(card.dealer_card_value <= 6){
+										noteText = "In games with 1 or 2 decks, a pair of sixes should always be split against an up card of 6 or less.";
+									}else if(card.dealer_card_value === 7){
+										noteText = "In games with 1 or 2 decks, a pair of sixes against a dealer 7 should be split if DAS is allowed.<br>";
+										noteText += "Otherwise hit.";
+									}else{
+										noteText = "In games with 1 or 2 decks, a pair of sixes should always be hit against an up card of 8 or more.";
+									}
+								}else if(card.number_of_decks >= 3){
+									if(card.dealer_card_value === 2){
+										noteText = "In multi-deck games, a pair of sixes vs a dealer two shoud be split if DAS is allowed,<br>";
+										noteText += "Otherwise hit.";
+									}else if(card.dealer_card_value <= 6){
+										noteText = "In multi-deck games, a pair of sixes should always be split against an up card between 3 and 6.";
+									}else{
+										noteText = "In multi-deck games, a pair of sixes should always be hit against an up card of 7 or more.";
+									}
+								}
+							}else if(card.player_hand_value === 14){
+								if(card.dealer_card_value <= 7){
+									noteText = "A pair of sevens should always be split if the dealer shows 7 or less.";
+								}else if(card.number_of_decks <= 2){
+									if(card.dealer_card_value === 8){
+										noteText = "In 1 or 2 deck games, a pair of sevens vs 8 should be split if DAS is allowed, otherwise hit.";
+									}else if(card.number_of_decks === 1){
+										if(card.dealer_card_value === 9){
+											noteText = "In a single-deck game, you should hit a pair of sevens against a dealer's 9.";
+										}else if(card.dealer_card_value === 10){
+											noteText = "In single-deck games with a pair of sevens vs a 10 up, you should surrender if possible,<br>";
+											noteText += "Otherwise stay";
+										}else if(card.dealer_card_value === 11){
+											noteText = "In single-deck games with a pair of sevens vs an ace, you should hit<br>";
+											noteText += "Unless the dealer hits on soft 17, in which case you should try to surrender first.";
+										}
+									}else if(card.number_of_decks === 2){
+										noteText = "In double-deck games, you should hit a pair of sevens against a dealer card of 9 or more.";
+									}
+								}else if(card.number_of_decks >= 3){
+									noteText = "In multi-deck games, you should hit a pair of sevens against a dealer card of 8 or more.";
+								}
+							}else if(card.player_hand_value === 16){
+								noteText = "You should always split eights,<br>";
+								noteText += "But in games with more than one deck, where the dealer hits soft 17 and has an ace showing<br>";
+								noteText = "You should try to surrender first.";
+							}else if(card.player_hand_value === 18){
+								noteText = "A you should stay on a pair of nines if the dealer has a 7, 10, or ace showing.<br>";
+								noteText += "Anything else should be split. <br><br>";
+								noteText += "The only exception is single-deck games where the dealer hits soft 17 and has an ace up.<br>";
+								noteText += "If that is the case, you should split as long as DAS is allowed.";
+							}else if(card.player_hand_value === 20){
+								noteText = "You should always stay on a pair of 10-value cards.";
+							}else if(card.player_hand_value === 20){
+								noteText = "Aces should always be split. No exceptions.";
+							}
+						}else if(card.player_hand_value <= 7){
+							noteText = "You should always hit on hands that have a value of 7 or less, regardless of the table rules";
+						}else if(card.player_hand_value === 8){
+							noteText = "When your hand value is 8, you should hit ";
+							noteText += "unless it is a single-deck game and the dealer's up card is a 5 or 6, <br>";
+							noteText += "then you should double if possible (otherwise hit).";
+						}else if(card.player_hand_value === 9){
+							if(card.dealer_card_value <= 6){
+								noteText = "When your hand value is 9, you should double if possible (otherwise hit) on a dealer up card of 6 or less. <br>";
+								noteText += "The only exception is multi-deck games with a dealer up card of 2, where youu should hit instead of double.";
+							}else{
+								noteText = "When your hand value is 9, you should always hit on a dealer up card of 7 or more.";
+							}
+						}else if(card.player_hand_value === 10){
+							noteText = "When your hand value is 10, you should double if possible (otherwise hit) on a dealer up card of 9 or less <br>";
+							noteText += "and hit when the up card is 10 or ace.";
+						}else if(card.player_hand_value === 11){
+							noteText = "When your hand value is 11, you should always double. <br>";
+							noteText += "The only exception is multi-deck games where the dealer has an ace up.<br>";
+							noteText += "In this case, you should hit instead of double.";
+						}else if(card.hand_type == "hard"){
+							if(card.player_hand_value === 12){
+								noteText = "When your hand value is a hard 12, you should hit, as long as the dealer's up card is not a 4, 5, or 6. <br>";
+								noteText += "If it is, then you should stay.";
+							}else if(card.player_hand_value >= 13 && card.player_hand_value <= 16){
+								if(card.dealer_card_value <= 6){
+									noteText = "On hard hands between 13 and 16, you should always stay if the dealer's card is less than 7.";
+								}else if(card.dealer_card_value >= 7){
+									noteText = "For hard hands between 13 and 16, you should hit if the dealer card is greater than 6<br>";
+									noteText += "unless it is one of the few surrender cases.<br>";
+									noteText += "<br> Surrender Cases:<br>";
+									noteText += "*Always surrender on hard 16 with dealer card of 10 or ace.<br>";
+									noteText += "*In games with more than one deck, surrender on hard 16 with dealer card of 10.<br>";
+									noteText += "*If dealer hits a soft 17, surrender on hard 15 when the dealer has an ace showing.<br>";
+									noteText += "*On multi-deck games, you should also surrender on a hard 16 when the dealer's card is a 9.<br>";
+									noteText += "*With a hard 17 and an ace showing, surrender (stay if not possible) if the dealer hits a soft 17.<br>";
+									noteText += "*never surrender on soft hands.";
+								}
+							}else if(card.player_hand_value >= 17){
+								noteText = "Stay on all hard hands of 17 or more<br>";
+								noteText += "The only exception is when the dealer hits soft 17 and you have a hard 17 against an ace up<br>";
+								noteText += "then you should surrender if possible, otherwise stay.";
+							}
+						}else if(card.hand_type == "soft"){
+							if(card.player_hand_value <= 16){
+								noteText = "For soft hands of 16 or less, you should double if possible on a dealer up card of 4, 5 or 6. Otherwise hit";
+								noteText += "<br><br>But there are some exceptions: <br>";
+								noteText += "*when using 2 or more decks, hit on hands of 14 or less if dealer card is a 4<br>";
+								noteText += "*if it's a double-deck game where the dealer hits on soft 17, you should still double <br>";
+								noteText += "rather than hit if the dealer card is 4 and your hand value is 14";
+							}else if(card.player_hand_value === 17){
+								if(card.dealer_card_value <= 6){
+									noteText = "On a soft 17, you should double if possible (otherwise hit) when dealer's card is less than 7";
+								}else{
+									noteText = "On a soft 17, hit if the dealer has 7 or higher.";
+								}
+							}else if(card.player_hand_value === 18){
+								if(card.dealer_card_value <=6 ){
+									noteText = "If you have a soft 18, and the dealer up card is less than 7, you should double if possible(otherwise stay)";
+									noteText += "<br> The only exception is in single-deck games with a soft 18 against a 2. Then you should split instead.";
+								}else{
+									noteText = "You should stay with a soft 18 against a 7 or 8, but hit against a 9 or higher.";
+								}
+							}else if(card.player_hand_value >= 19){
+								noteText = "If you have a soft hand of 19 or more, you should stay "
+								noteText += "<br> unless it is a 19 vs dealer 6, then you should double when possible (else stay)";
+							}
+						}
 
 						header.innerHTML = noteText;
 						
+						if(noteText == ""){
+							console.log("error adding note\n card:");
+							console.log(card);
+						}
 					}
 					
-					
+					//a slight misnomer, since notification overlay is actually closed by the event listener added to all buttons with class= "exit_button"
+					//this function just displays next card for flashcards only after the button is clicked, and removes the event listener.
+					function closeNotification(){
+						
+						let removableItems = document.getElementById("flashcard_overlay").getElementsByClassName("remove");
+						for(i=0; i<removableItems.length; ){
+							removableItems[i].parentNode.removeChild(removableItems[i]);
+						}
+						
+						deck.displayTopCard();
+						document.getElementById("notification_button").removeEventListener("click", closeNotification);
+					}
 				}
 			}
 			
@@ -1576,38 +1699,49 @@ var trueCountApp = (function(){
 		//connects to server and loads flashcards from DB if they don't exist in local storage.
 		//flashcard array is an array of objects with attributes of the same name and value as columns from flashcard table in database 
 		function loadFlashcards(){
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					flashcardArray = JSON.parse(this.responseText);
-					
-					spacingIncrementData.stability.push(60000);
-					
-					let copyArray = [];
-					
-					flashcardArray.forEach(function(card){
-						card.reviewNumber = 0; 
-						card.isUpdated = false; 
-						card.isNew = true;
-						card.actionType = "primary";
+			if(localStorage.basicFlashcards && localStorage.answerHistory){
+				flashcardArray = JSON.parse(localStorage.basicFlashcards);
+				answerHistory = JSON.parse(localStorage.answerHistory);
+			}
+			else{
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						flashcardArray = JSON.parse(this.responseText);
 						
+						spacingIncrementData.stability.push(60000);
 						
-						let copy = {};
-						Object.assign(copy, card);
-						copy.actionType = "secondary";
-						copyArray.push(copy);
-					
+						let copyArray = [];
 						
-					})
-					
-					copyArray.forEach(function (card){ flashcardArray.push(card)});
-				}
-			};
-			xmlhttp.open("POST", "../loadflashcards.php", true);
-			xmlhttp.send();
+						flashcardArray.forEach(function(card){
+							card.reviewNumber = 0; 
+							card.isUpdated = false; 
+							card.isNew = true;
+							card.actionType = "primary";
+							
+							
+							let copy = {};
+							Object.assign(copy, card);
+							copy.actionType = "secondary";
+							copyArray.push(copy);
+						
+							
+						})
+						
+						copyArray.forEach(function (card){ 
+							card.card_id = flashcardArray.length + 1;  //card ids are not zero indexed
+							flashcardArray.push(card);
+						});
+						
+					}
+				};
+				xmlhttp.open("POST", "../loadflashcards.php", true);
+				xmlhttp.send();
+			}
+			
 		}
 		
-		//practice deck is an array of card objects loaded from server with some properties taken from database and others added in js:
+		//practice deck is an array of card objects loaded from server/localstorage with some properties taken from database and others added in js:
 		//*****card_id, number_of_decks, dealer_hits_soft, dealer_card_value, player_hand_value, hand_type, primary_action, secondary_action
 		//*****reviewNumber, isUpdated, isNew, percentOverdue, actionType, (lastSeen and currentIntervalLength are added after card is first learned)
 		function basicFlashcardPractice(e){
@@ -1650,7 +1784,6 @@ var trueCountApp = (function(){
 					localStorage.setItem("practiceRules", jsonPracticeRules);
 				}
 				
-			deck.initializeDeck();
 		}
 		
 		function goBackOne(){
