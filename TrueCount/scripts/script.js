@@ -983,11 +983,12 @@ var trueCountApp = (function(){
 	//everything related to the practice section
 	function practiceSkills(){
 		let navigationArray = ["practice_home"];
+		let eventVariable; //used to store single event to be referenced later
 		let flashcardArray = [];
 		let practiceDeck = [];
 		//an array where each element is an array of the result objects for that review number. 
 		//result objects have 2 attributes: result, and interval
-		let answerHistory = [];
+		let overallAnswerHistory = [];
 		
 		//stability is the standard amount of time between reviews. 
 		//stability[0] is time between new card and first review, stability[1] is between first and second review, etc.
@@ -1080,6 +1081,7 @@ var trueCountApp = (function(){
 				function displayHands(){
 					
 					//displays dealer's up card
+					let cardBack = document.createElement("img");
 					let upCard = document.createElement("img");
 					let imageNumber;
 					let imageArray = [];
@@ -1094,10 +1096,18 @@ var trueCountApp = (function(){
 					
 					imageArray.push(imageNumber);
 					
+					cardBack.src = "images/cards/card_back.png";
+					cardBack.alt = "dealer down card";
+					cardBack.className = "card remove";
+					cardBack.style.marginRight = "-12.5%";
+					cardBack.style.marginLeft = "-12.5%";
+					document.getElementById("flashcard_overlay").getElementsByClassName("hand_of_cards")[0].appendChild(cardBack);
+					
 					upCard.src = "images/cards/cards_" + imageNumber + ".png";
 					upCard.alt = "dealer up card";
 					upCard.className = "card remove";
-					upCard.style.marginRight = "0px";
+					upCard.style.marginRight = "-12.5%";
+					upCard.style.marginLeft = "-12.5%";
 					document.getElementById("flashcard_overlay").getElementsByClassName("hand_of_cards")[0].appendChild(upCard);
 				
 					//creates player hand
@@ -1113,7 +1123,8 @@ var trueCountApp = (function(){
 								cardArray.push(cardValue);
 								remainingValue -= cardValue;
 							}else if(practiceDeck[0].player_hand_value > 12){
-								cardValue = Math.floor( Math.random()*10 ) + 1;
+								//between playerhand-10 and 10
+								cardValue = Math.floor( Math.random()*(21 - practiceDeck[0].player_hand_value) ) + practiceDeck[0].player_hand_value - 10;
 								cardArray.push(cardValue);
 								remainingValue -= cardValue;
 							}
@@ -1129,8 +1140,8 @@ var trueCountApp = (function(){
 							break;
 					}
 					
-					if(practiceDeck[0].actionType == "secondary" && 
-					(practiceDeck[0].secondary_action == "hit" || practiceDeck[0].secondary_action == "stay" )){
+					if( practiceDeck[0].actionType == "secondary" && document.getElementById("flashcard_2card_hands").value == "no"
+					&& (practiceDeck[0].secondary_action == "hit" || practiceDeck[0].secondary_action == "stay" ) ){
 						//continues to draw cards to fill hand, making sure to avoid soft aces
 						while(remainingValue > 0){
 							if(remainingValue <= 10){
@@ -1237,6 +1248,11 @@ var trueCountApp = (function(){
 						document.getElementById("flashcard_overlay").getElementsByClassName("hand_of_cards")[1].appendChild(image);
 					
 					});
+					
+					//updates player's hand value
+					let handIndicator = document.getElementById("flashcard_overlay").getElementsByClassName("content")[0];
+					handIndicator.innerHTML = practiceDeck[0].player_hand_value;
+					
 				}	
 			
 				function displayOptions(){
@@ -1375,14 +1391,17 @@ var trueCountApp = (function(){
 					practiceDeck[0].isUpdated = true;
 					practiceDeck[0].isNew = false;
 					practiceDeck[0].lastSeen = Date.now();
+					practiceDeck[0].answerHistory.push({reviewNumber: reviewNumber, result: e.target.value, interval: time});
 					
 					calculateSpacingIncrements();
+					updateCardDifficulty();
 					calculateInterval();	//also adjusts review number
-					calculateOverdue()
-					flashcardArray[practiceDeck[0].card_id-1] = practiceDeck[0];
+					calculateOverdue();
+					flashcardArray[practiceDeck[0].card_id-1] = practiceDeck[0];  //updates flashcardcardArray (ordered) with practice deck data
 					
 					localStorage.setItem("basicFlashcards", JSON.stringify(flashcardArray));
-					localStorage.setItem("answerHistory", JSON.stringify(answerHistory));
+					localStorage.setItem("overallAnswerHistory", JSON.stringify(overallAnswerHistory));
+					localStorage.setItem("incrementData", JSON.stringify(spacingIncrementData));
 					
 					sort(practiceDeck);
 					
@@ -1421,7 +1440,7 @@ var trueCountApp = (function(){
 					}else if(e.target.value == "incorrect"){
 						
 						practiceDeck[0].reviewNumber = 1;
-						practiceDeck[0].currentIntervalLength = spacingIncrementData.stability[0];
+						practiceDeck[0].currentIntervalLength = 60000;
 					}					
 				}
 				
@@ -1429,11 +1448,11 @@ var trueCountApp = (function(){
 				function calculateSpacingIncrements(){
 					
 					//adds data to answer history
-					if(answerHistory.length === reviewNumber){
-						answerHistory.push([]);
+					if(overallAnswerHistory.length === reviewNumber){
+						overallAnswerHistory.push([]);
 					}
 					
-					answerHistory[reviewNumber].push({result: e.target.value, interval: time});
+					overallAnswerHistory[reviewNumber].push({result: e.target.value, interval: time});
 					
 					//adds initial multiplier
 					if(spacingIncrementData.incrementMultiplier.length === reviewNumber){
@@ -1448,33 +1467,139 @@ var trueCountApp = (function(){
 					//calculates stability[r-1] and multiplier[r-2] for this review number
 					if(reviewNumber > 0){
 						let correctCount = 0;
-						answerHistory[reviewNumber].forEach(function(review){
+						overallAnswerHistory[reviewNumber].forEach(function(review){
 							if(review.result == "correct"){
 								correctCount++;
 							}
 						});
 						
-						if(correctCount > 10){
+						if(correctCount > 0){
 							//calculate stability[reviewNumber-1]
 							let stability = spacingIncrementData.stability[reviewNumber-1];
 							let actualCorrect = correctCount;
-							let expectedCorrect = 0;
 							
-							answerHistory[reviewNumber].forEach(function(review){
-								expectedCorrect += 0.9**(review.time/stability);
-							})
+							let n = overallAnswerHistory[reviewNumber].length;
+							let s0 = stability;
+							let s1 = 2*s0
+
+							while( Math.abs(actualCorrect - calculateExpected(s0)) >= 1/n ){
+								let error0 = calculateExpected(s0) - actualCorrect;
+								let error1 = calculateExpected(s1) - actualCorrect;
+								
+								if(error0 > error1){
+									let x = s0;
+									s0 = s1;
+									s1 = x;
+								}else if(error0 == error1){
+									if(error1 <= 0){
+										s1 *= 2;
+									}else{
+										s0 *= 0.5; 
+									}
+								}
+								
+								if( actualCorrect < calculateExpected(s0) ){
+									s1 = s0;
+									s0 *= 0.5;
+								}else if( actualCorrect >=  calculateExpected(s0) && actualCorrect <= calculateExpected(s1) ){
+									let x = (s0 + s1) / 2;
+									if(actualCorrect <= calculateExpected(x) ){
+										s1 = x;
+									}else{
+										s0 = x;
+									}
+								}else if( actualCorrect > calculateExpected(s1) ){
+									s0 = s1;
+									s1 *= 2;
+								}
+							}							
 							
-							spacingIncrementData.stability[reviewNumber-1] = stability * ( Math.log(expectedCorrect)/Math.log(actualCorrect) );
+							stability = s0;
+							spacingIncrementData.stability[reviewNumber-1] = stability;
 							
 							if(reviewNumber >= 2){
 								let stability1 = stability;
-								let stability2 = spacingIncrementData.stability[reviewNumber];
-								spacingIncrementData.incrementMultiplier[reviewNumber-2] = stability1/stability2;
+								let stability2 = spacingIncrementData.stability[reviewNumber-2];
+								let result = stability1/stability2;
+								if(result < 1){result = 1};
+								spacingIncrementData.incrementMultiplier[reviewNumber-2] = result;
 							}
 						}
 					}
+					console.log(spacingIncrementData);
+					console.log(overallAnswerHistory);
 				}
 			
+				function calculateExpected(stability){
+					let expectation = 0;
+					
+					overallAnswerHistory[reviewNumber].forEach(function(review){
+						expectation += 0.9**(review.interval/stability);
+					})
+					
+					return expectation;
+				}
+				
+				function updateCardDifficulty(){
+					let card = practiceDeck[0];
+					let correctCount = 0;
+					
+					card.answerHistory.forEach(function(item){
+						if(item.result = "correct"){
+							correctCount++;
+						}
+					})
+					
+					let n = card.answerHistory.length;
+					let d0 = card.difficultyMultiplier;
+					let d1 = 2*d0
+
+					while( Math.abs(correctCount - expectedCorrect(d0)) >= 1/n ){
+						let error0 = expectedCorrect(d0) - correctCount;
+						let error1 = expectedCorrect(d1) - correctCount;
+						
+						if(error0 > error1){
+							let x = d0;
+							d0 = d1;
+							d1 = x;
+						}else if(error0 == error1){
+							if(error1 <= 0){
+								d1 *= 2;
+							}else{
+								d0 *= 0.5; 
+							}
+						}
+						
+						if( correctCount < expectedCorrect(d0) ){
+							d1 = d0;
+							d0 *= 0.5;
+						}else if( correctCount >=  expectedCorrect(d0) && correctCount <= expectedCorrect(d1) ){
+							let x = (d0 + d1) / 2;
+							if(correctCount <= expectedCorrect(x) ){
+								d1 = x;
+							}else{
+								d0 = x;
+							}
+						}else if( correctCount > expectedCorrect(d1) ){
+							d0 = d1;
+							d1 *= 2;
+						}
+					}							
+					
+					practiceDeck[0].difficultyMultiplier = d0;
+					
+					function expectedCorrect(difficulty){
+						let expectation = 0;
+						
+						card.answerHistory.forEach(function(item){
+							let x = item.interval/spacingIncrementData.stability[item.reviewNumber];
+							expectation += 0.9**(x/difficulty);
+						});
+						
+						return expectation;
+					}
+				}
+				
 				function displayNotification(){
 					if(e.target.value == "incorrect"){
 						let overlay = document.getElementById("notification_overlay");
@@ -1592,8 +1717,8 @@ var trueCountApp = (function(){
 								noteText = "When your hand value is 9, you should always hit on a dealer up card of 7 or more.";
 							}
 						}else if(card.player_hand_value === 10){
-							noteText = "When your hand value is 10, you should double if possible (otherwise hit) on a dealer up card of 9 or less <br>";
-							noteText += "and hit when the up card is 10 or ace.";
+							noteText = "When your hand value is 10, <br> you should double if possible on a dealer up card of 9 or less <br>";
+							noteText += "and hit in all other cases.";
 						}else if(card.player_hand_value === 11){
 							noteText = "When your hand value is 11, you should always double. <br>";
 							noteText += "The only exception is multi-deck games where the dealer has an ace up.<br>";
@@ -1604,9 +1729,9 @@ var trueCountApp = (function(){
 								noteText += "If it is, then you should stay.";
 							}else if(card.player_hand_value >= 13 && card.player_hand_value <= 16){
 								if(card.dealer_card_value <= 6){
-									noteText = "On hard hands between 13 and 16, you should always stay if the dealer's card is less than 7.";
+									noteText = "On hard hands between 13 and 16, you should always stay if the dealer's card is 6 or less.";
 								}else if(card.dealer_card_value >= 7){
-									noteText = "For hard hands between 13 and 16, you should hit if the dealer card is greater than 6<br>";
+									noteText = "For hard hands between 13 and 16, you should hit if the dealer card is 7 or more<br>";
 									noteText += "unless it is one of the few surrender cases.<br>";
 									noteText += "<br> Surrender Cases:<br>";
 									noteText += "*Always surrender on hard 16 with dealer card of 10 or ace.<br>";
@@ -1681,6 +1806,14 @@ var trueCountApp = (function(){
 		Array.from(document.getElementsByClassName("center_navigation")).forEach(function(item){item.style.display = "none"});
 		document.getElementById("practice_home").style.display = "block";
 		
+		let practiceRules;
+		if(localStorage.practiceRules){
+			practiceRules = JSON.parse(localStorage.practiceRules);
+			for(let i=0; i<practiceRules.length;i++){
+				document.getElementsByClassName("practice_rule")[i].value = practiceRules[i];
+			}
+		}
+		
 		addEventListeners();
 		loadFlashcards();
 		
@@ -1696,12 +1829,22 @@ var trueCountApp = (function(){
 			navigationArray.push(e.target.value);
 		}
 		
+		
+		//practice deck is an array of card objects loaded from server/localstorage with some properties taken from database and others added in js:
+		//original attributes:
+			//*****card_id, number_of_decks, dealer_hits_soft, dealer_card_value, player_hand_value, hand_type, primary_action, secondary_action
+		//added at flashcard load:
+			//*****reviewNumber, isUpdated, isNew, percentOverdue, actionType, answerHistory, difficultyMultiplier
+		//added when card is first seen:
+			//*****lastSeen and currentIntervalLength
+		
 		//connects to server and loads flashcards from DB if they don't exist in local storage.
 		//flashcard array is an array of objects with attributes of the same name and value as columns from flashcard table in database 
 		function loadFlashcards(){
-			if(localStorage.basicFlashcards && localStorage.answerHistory){
+			if(localStorage.basicFlashcards && localStorage.overallAnswerHistory && localStorage.incrementData){
 				flashcardArray = JSON.parse(localStorage.basicFlashcards);
-				answerHistory = JSON.parse(localStorage.answerHistory);
+				overallAnswerHistory = JSON.parse(localStorage.overallAnswerHistory);
+				spacingIncrementData = JSON.parse(localStorage.incrementData);
 			}
 			else{
 				var xmlhttp = new XMLHttpRequest();
@@ -1718,7 +1861,8 @@ var trueCountApp = (function(){
 							card.isUpdated = false; 
 							card.isNew = true;
 							card.actionType = "primary";
-							
+							card.answerHistory = [];
+							card.difficultyMultiplier = 1;
 							
 							let copy = {};
 							Object.assign(copy, card);
@@ -1735,22 +1879,19 @@ var trueCountApp = (function(){
 						
 					}
 				};
-				xmlhttp.open("POST", "../loadflashcards.php", true);
+				xmlhttp.open("POST", "php/loadflashcards.php", true);
 				xmlhttp.send();
 			}
 			
 		}
 		
-		//practice deck is an array of card objects loaded from server/localstorage with some properties taken from database and others added in js:
-		//*****card_id, number_of_decks, dealer_hits_soft, dealer_card_value, player_hand_value, hand_type, primary_action, secondary_action
-		//*****reviewNumber, isUpdated, isNew, percentOverdue, actionType, (lastSeen and currentIntervalLength are added after card is first learned)
 		function basicFlashcardPractice(e){
 			deck.initializeDeck(e);
 			deck.calculateOverdue();
 			deck.sort(practiceDeck);
 			deck.displayTopCard();
 			document.getElementById("flashcard_overlay").style.display = "block";
-			
+			eventVariable = e;
 		}
 		
 		function quickstartPracticeSession(){
@@ -1761,14 +1902,6 @@ var trueCountApp = (function(){
 			document.getElementById("practice_skills_overlay").getElementsByClassName("settings_overlay")[0].style.display = "block";
 			document.getElementById("practice_skills_overlay").getElementsByClassName("clear_overlay")[0].style.display = "block";
 			
-			let practiceRules;
-			if(localStorage.practiceRules){
-				practiceRules = JSON.parse(localStorage.practiceRules);
-				for(let i=0; i<practiceRules.length;i++){
-					document.getElementsByClassName("practice_rule")[i].value = practiceRules[i];
-				}
-			}
-			
 		}
 		
 		function saveSelection(){
@@ -1778,12 +1911,22 @@ var trueCountApp = (function(){
 			let practiceRules = [];
 			let jsonPracticeRules;
 			Array.from(document.getElementsByClassName("practice_rule")).forEach(function(rule){practiceRules.push(rule.value)});
-				jsonPracticeRules = JSON.stringify(practiceRules);
-				
-				if(localStorage.practiceRules != jsonPracticeRules){
-					localStorage.setItem("practiceRules", jsonPracticeRules);
+			
+			jsonPracticeRules = JSON.stringify(practiceRules);
+			
+			if(localStorage.practiceRules != jsonPracticeRules){
+				localStorage.setItem("practiceRules", jsonPracticeRules);
+			}
+			
+			if(document.getElementById("flashcard_overlay").style.display == "block"){
+				let removableItems = document.getElementById("flashcard_overlay").getElementsByClassName("remove");
+				for(i=0; i<removableItems.length; ){
+					removableItems[i].parentNode.removeChild(removableItems[i]);
 				}
 				
+				basicFlashcardPractice(eventVariable);
+			}
+			
 		}
 		
 		function goBackOne(){
@@ -1800,6 +1943,7 @@ var trueCountApp = (function(){
 			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.addEventListener("click", basicFlashcardPractice)});
 			Array.from(document.getElementsByClassName("exit_button")).forEach(function(btn){btn.addEventListener("click", exit)});
 			document.getElementById("practice_rules_button").addEventListener("click", selectRules);
+			document.getElementById("flashcard_settings_button").addEventListener("click", selectRules);
 			
 			document.getElementById("flashcard_overlay").getElementsByClassName("player_options_button_container")[0].addEventListener("click", deck.checkAnswer);
 			document.getElementById("practice_skills_overlay").getElementsByClassName("clear_overlay")[0].addEventListener("click", saveSelection);
@@ -1814,6 +1958,7 @@ var trueCountApp = (function(){
 			Array.from(document.getElementsByName("basic_flashcards_button")).forEach(function(btn){btn.removeEventListener("click", basicFlashcardPractice)});
 			Array.from(document.getElementsByClassName("exit_button")).forEach(function(btn){btn.removeEventListener("click", exit)});
 			document.getElementById("practice_rules_button").removeEventListener("click", selectRules);
+			document.getElementById("flashcard_settings_button").removeEventListener("click", selectRules);
 			
 			document.getElementById("flashcard_overlay").getElementsByClassName("player_options_button_container")[0].removeEventListener("click", deck.checkAnswer);
 			document.getElementById("practice_skills_overlay").getElementsByClassName("clear_overlay")[0].removeEventListener("click", saveSelection);

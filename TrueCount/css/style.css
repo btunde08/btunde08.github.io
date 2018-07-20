@@ -19,6 +19,9 @@
 .tab_content{
 	display: none;
 }
+.settings_button{
+	
+}
 .settings_overlay {
 	height: 100%;
 	width: 50%;
@@ -103,6 +106,15 @@
 	display: inline-block;
 	padding-top: 10%;
 	margin-left: -15%;
+	margin-right: 3%;
+	border: solid;
+}
+.centered_hand_indicator{
+	position: absolute;
+	width: 10%;
+	display: inline-block;
+	padding-top: 10%;
+	margin-left: -25%;
 	margin-right: 3%;
 	border: solid;
 }

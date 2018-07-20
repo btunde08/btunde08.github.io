@@ -203,7 +203,7 @@
 				
 				<ul class="options_menu">
 					<li><button class="return_to_menu_button" type="button">Main Menu</button></li>
-					<li><button id="practice_rules_button" type="button">Select Rules</button></li>
+					<li><button id="practice_rules_button" type="button">Settings</button></li>
 				</ul>
 				
 				<ul id="practice_home" class="center_navigation">
@@ -227,10 +227,41 @@
 						<button type="button" id="practice_quickstart_button">Quick Start</button>
 				</div>
 				
+				<!-- ############################ flashcard overlay ######################## -->
+				<div id="flashcard_overlay">
+					<ul class="options_menu">
+						<li><button id="flashcard_settings_button" class="settings_button" type="button">Settings</button></li>
+						<li><button class="exit_button" type="button" value="flashcard_overlay">Exit</button></li>
+					</ul>
+					<p class="header2">placeholder text Number of Decks</p>
+					<p class="header2">placeholder text Hit or Stay Soft 17</p>
+					<p class="header2">placeholder text Double After Split Allowed/Not</p>
+					<br>
+					<br>
+					<div class="hand_of_cards center"></div>
+					<br>
+					
+					<div class="hand_of_cards center">
+						<div class="centered_hand_indicator">
+							<div class="content"></div>
+						</div>
+					</div>
+					
+					<br>
+					<div class="player_options_button_container">
+						<button class="hit_button" type="button" >Hit</button>
+						<button class="stay_button" type="button" >Stay</button>
+						<button class="double_button" type="button" >Double</button>
+						<button class="split_button" type="button" >Split</button>
+						<button class="surrender_button" type="button" >Surrender</button>
+					</div>
+					
+				</div>
+				
 				<div class="clear_overlay"></div>
 				<div class="settings_overlay">
 					<p class="header2">
-						What rules would you like to practice?
+						What rules would you like to practice with?
 					</p>
 					<form>
 						<p>What type of game?
@@ -256,32 +287,19 @@
 							</select>
 						</p>
 					</form>
+					<p class="header2">
+						Other Settings:
+					</p>
+					<form>
+						<p>Hands Only Contain 2 Cards:
+							<select id="flashcard_2card_hands" class="practice_rule">
+								<option value="no" selected>No</option>
+								<option value="yes">Yes</option>
+							</select>
+						</p>
+					</form>
 				</div>
 				
-				
-				<!-- ############################ flashcard overlay ######################## -->
-				<div id="flashcard_overlay">
-					<ul class="options_menu">
-						<li><button class="exit_button" type="button" value="flashcard_overlay">Exit</button></li>
-					</ul>
-					<p class="header2">placeholder text Number of Decks</p>
-					<p class="header2">placeholder text Hit or Stay Soft 17</p>
-					<p class="header2">placeholder text Double After Split Allowed/Not</p>
-					<br>
-					<br>
-					<div class="hand_of_cards center"></div>
-					<br>
-					<div class="hand_of_cards center"></div>
-					<br>
-					<div class="player_options_button_container">
-						<button class="hit_button" type="button" >Hit</button>
-						<button class="stay_button" type="button" >Stay</button>
-						<button class="double_button" type="button" >Double</button>
-						<button class="split_button" type="button" >Split</button>
-						<button class="surrender_button" type="button" >Surrender</button>
-					</div>
-					
-				</div>
 			</div>
 			
 			<script src="scripts/script.js"></script>
