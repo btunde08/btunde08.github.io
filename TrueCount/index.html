@@ -9,15 +9,30 @@
 				<li><button id="play_blackjack_button"type="button">Play Blackjack</button></li>
 				<li>Learn To Count</li>
 				<li><button id="practice_skills_button" type="button">Practice Skills</button></li>
-				<li>Settings</li>
+				<li><button id="main_settings_button" type="button">Main Settings</li>
 				<li>Stats</li>
 				<li>Run Simulations</li>
 			</ul>
+			<div id="main_clear_overlay" class="clear_overlay"></div>
+			<div id="main_settings_overlay" class="settings_overlay">
+				<p class="header2">
+					Main Settings
+				</p>
+				<button id="clear_all_data_button" type="button">Reset All Data</button>
+			</div>
 			
 			<!--##################Notification Overlay for use throughout game################## -->
-			<div id="notification_overlay" class="center">
+			<div id="notification_overlay" class="center notification_overlay">
 				<p id="notification_text" class="header1"></p>
 				<button id="notification_button" type="button" class="exit_button" value="notification_overlay">Okay</button>
+			</div>
+			
+			<div id="clear_data_confirmation" class="center notification_overlay">
+				<p class="header1">
+					Are you sure you want to delete all your saved data?
+				</p>
+				<button id="confirm_clear_data" type="button" class="exit_button" value="clear_data_confirmation">Yes, I Want To Delete My Data</button>
+				<button type="button" class="exit_button" value="clear_data_confirmation">No, Don't Delete My Data</button>
 			</div>
 			
 			<!--#############################Play Blackjack Overlay############################## -->
@@ -203,7 +218,7 @@
 				
 				<ul class="options_menu">
 					<li><button class="return_to_menu_button" type="button">Main Menu</button></li>
-					<li><button id="practice_rules_button" type="button">Settings</button></li>
+					<li><button id="practice_rules_button" type="button">Practice Settings</button></li>
 				</ul>
 				
 				<ul id="practice_home" class="center_navigation">
@@ -219,7 +234,6 @@
 					<li><button type="button" name="basic_flashcards_button" value="soft">Soft Hands</button></li>
 					<li><button type="button" name="basic_flashcards_button" value="split">Split Hands</button></li>
 					<li><button type="button" name="basic_flashcards_button" value="all">All</button></li>
-					<li>Complete the Table</li>
 					<li><button name="go_back_button" type="button">Go Back</button></li>
 				</ul>
 				
@@ -230,14 +244,42 @@
 				<!-- ############################ flashcard overlay ######################## -->
 				<div id="flashcard_overlay">
 					<ul class="options_menu">
-						<li><button id="flashcard_settings_button" class="settings_button" type="button">Settings</button></li>
+						<li><button id="flashcard_settings_button" class="settings_button" type="button">Practice Settings</button></li>
+						<li><button id="card_info_button" type="button">Card Info</button></li>
 						<li><button class="exit_button" type="button" value="flashcard_overlay">Exit</button></li>
 					</ul>
 					<p class="header2">placeholder text Number of Decks</p>
 					<p class="header2">placeholder text Hit or Stay Soft 17</p>
 					<p class="header2">placeholder text Double After Split Allowed/Not</p>
 					<br>
+					
+					<div class="information_box">
+						<p class="header3">Flashcard Statistics (CurrentRuleset)</p>
+						<table>
+							<tr>
+								<td>Reviews Due:</td>
+								<td class="basic_flashcard_reviews"></td>
+							</tr>
+							<tr>
+								<td>Cards Seen:</td>
+								<td class="number_of_cards_seen"></td>
+							</tr>
+							<tr>
+								<td>Cards Learned:</td>
+								<td class="number_of_cards_learned"></td>
+							</tr>
+							<tr>
+								<td>Number Correct(This Session):</td>
+								<td class="session_correct">0/0(0.00%)</td>
+							</tr>
+							<tr>
+								<td>Number Correct(All Time):</td>
+								<td class="overall_correct"></td>
+							</tr>
+						</table>
+					</div>
 					<br>
+					
 					<div class="hand_of_cards center"></div>
 					<br>
 					
@@ -246,8 +288,8 @@
 							<div class="content"></div>
 						</div>
 					</div>
-					
 					<br>
+					
 					<div class="player_options_button_container">
 						<button class="hit_button" type="button" >Hit</button>
 						<button class="stay_button" type="button" >Stay</button>
@@ -259,6 +301,46 @@
 				</div>
 				
 				<div class="clear_overlay"></div>
+				
+				<!-- ############################ card info ######################## -->
+				<div id="card_info_overlay">
+					<button type="button" class="clear_overlay2 exit_button" value="card_info_overlay"></button>
+					<div class="info_overlay">
+						<button id="card_info_exit_button" type="button" class="exit_button" value="card_info_overlay">Close</button>
+						<br>
+						<table>
+							<tr>
+								<td>Last Seen:</td>
+								<td class="last_seen"></td>
+							</tr>
+							<tr>
+								<td>Percent Overdue:</td>
+								<td class="percent_overdue"></td>
+							</tr>
+							<tr>
+								<td>Next Due(if correct):</td>
+								<td class="next_interval"></td>
+							</tr>
+							<tr>
+								<td>Correct In A Row:</td>
+								<td class="review_number"></td>
+							</tr>
+							<tr>
+								<td>Times Seen:</td>
+								<td class="times_seen"></td>
+							</tr>
+							<tr>
+								<td>Difficulty Level:</td>
+								<td class="card_difficulty"></td>
+							</tr>
+						</table>
+						<br>
+						<button type="button" id="card_info_show_helptext_button">Show Helptext</button>
+						<p class="header2 helptext"></p>
+					</div>
+				</div>
+				
+				<!-- ############################ flashcard settings ######################## -->
 				<div class="settings_overlay">
 					<p class="header2">
 						What rules would you like to practice with?

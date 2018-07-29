@@ -22,7 +22,7 @@
 .settings_button{
 	
 }
-.settings_overlay {
+.settings_overlay, .info_overlay {
 	height: 100%;
 	width: 50%;
 	display: none;
@@ -136,7 +136,7 @@
 	z-index: auto;
 	
 }
-#notification_overlay {
+.notification_overlay {
 	height: 100%;
 	width: 100%;
 	display: none;
@@ -156,7 +156,7 @@
 	margin-right: auto;
 }
 
-.clear_overlay{
+.clear_overlay, .clear_overlay2{
 	border: solid;
 	height: 100%;
 	width: 100%;
@@ -167,6 +167,7 @@
 	z-index: auto;
 	background-color: rgba(0,0,0, 0);
 }
+
 /* for use on Play Blackjack Page Only*/
 .chips_container{
 	display: inline-block;
@@ -222,6 +223,13 @@
 	left:0;
 	background-color: rgba(255,255,255);
 	background-color: rgba(255,255,255, 1);
+}
+.information_box{
+	width: 20%;
+	height: 30%;
+	border: solid;
+	float: left;
+	position: absolute;
 }
 /* Atomic CSS for use on multiple pages*/
 .hidden{

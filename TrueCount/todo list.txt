@@ -1,0 +1,34 @@
+main settings
+. counting system options
+. overdue cards notification
+. player statistics
+	flashcard statistics
+	blackjack game bankroll
+	time online
+	overdue cards in next __ days/hours calculator
+
+play Blackjack (future updates)
+. 2 npc players in bj game
+. optimal strategy notification
+. user saves rule settings as a csino profile for later use
+. current hand is highlighted
+. shoe display
+. option to display player hand values
+. house edge for rules (relative to default)
+. hovertext for rules
+. manditory rules for leaderboard
+. save money amount into localstorage
+. change display speed for animations
+
+learn to count section
+. level selection
+
+practice section
+. show/hide hand values option
+. select which flashcard stats are shown
+.info for current card
+	percent correct
+	frequency in real play
+
+player avatar
+. casino perks/achievements to decorate player avatar
