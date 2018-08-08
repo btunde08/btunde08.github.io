@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 	<html lang="en">
 		<head>
-			<title>True Count: Learn To Beat The House</title>
+			<title>CardCounter: Learn To Beat The House</title>
 			<link rel="stylesheet" type="text/css" href="css/style.css">
 		</head>
 		<body>
@@ -13,6 +13,10 @@
 				<li>Stats</li>
 				<li>Run Simulations</li>
 			</ul>
+			<div class="center">
+				<button type="button" id="update_button">Run Update</button>
+			</div>
+			
 			<div id="main_clear_overlay" class="clear_overlay"></div>
 			<div id="main_settings_overlay" class="settings_overlay">
 				<p class="header2">
@@ -238,7 +242,8 @@
 				</ul>
 				
 				<div class="center">
-						<button type="button" id="practice_quickstart_button">Quick Start</button>
+					<li><button type="button" id="practice_advanced_button">Advanced Practice Selection</button></li>	
+					<li><button type="button" id="practice_quickstart_button">Quick Start</button></li>
 				</div>
 				
 				<!-- ############################ flashcard overlay ######################## -->
@@ -323,7 +328,7 @@
 							</tr>
 							<tr>
 								<td>Correct In A Row:</td>
-								<td class="review_number"></td>
+								<td class="correct_streak"></td>
 							</tr>
 							<tr>
 								<td>Times Seen:</td>
@@ -332,6 +337,10 @@
 							<tr>
 								<td>Difficulty Level:</td>
 								<td class="card_difficulty"></td>
+							</tr>
+							<tr>
+								<td>Percent Correct:</td>
+								<td class="percent_correct"></td>
 							</tr>
 						</table>
 						<br>
@@ -377,6 +386,12 @@
 							<select id="flashcard_2card_hands" class="practice_rule">
 								<option value="no" selected>No</option>
 								<option value="yes">Yes</option>
+							</select>
+						</p>
+						<p>Display Hand Value:
+							<select id="flashcard_show_hand_value" class="practice_rule">
+								<option value="no">No</option>
+								<option value="yes" selected>Yes</option>
 							</select>
 						</p>
 					</form>

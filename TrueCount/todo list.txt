@@ -22,12 +22,20 @@ play Blackjack (future updates)
 
 learn to count section
 . level selection
+. basic strategy
+	. hit/stay only
+	. double cases
+	. split cases
+	. surrender cases
+	. changes for soft 17
+	. changes for 2 deck
+	. changes for 3+ deck
 
 practice section
-. show/hide hand values option
 . select which flashcard stats are shown
+. advanced practice/card explorer (select specific cards to make a practice deck with)
+. save deck for later practice
 .info for current card
-	percent correct
 	frequency in real play
 
 player avatar
